@@ -1,14 +1,14 @@
 # WasteWise Scan
 
-![TRL 2](https://img.shields.io/badge/TRL-2%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Circular Materials · **TRL:** 2 of 9 (concept formulated) · **Prototype budget:** about $150 USD · **Difficulty:** 3 of 5
+**Area:** Circular Materials · **TRL:** 3 of 9 (proof of concept on paper) · **Budget:** $150 USD volume target; prototype $163 in parts · **Difficulty:** 3 of 5
 
 Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.
 
 ![WasteWise Scan concept](media/hero.png)
 
-[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/WSC-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Problem
 
@@ -16,9 +16,11 @@ Cameras cannot reliably tell PET from PP or HDPE, yet resin type sets the price 
 
 ## Concept
 
-Press the soft shroud against an item and press the button. The scanner pulses eight near-infrared bands from 850 to 1,650 nm, reads the reflection with an InGaAs photodiode, and in about 0.6 s (estimate) shows the resin, a confidence mark and the local price grade. Black, dark and low-confidence items read "unknown" and can be passed to WasteWise-ml. A white reference inside the protective cap keeps it calibrated.
+Press the soft shroud against an item and press the button. The scanner pulses eight near-infrared bands from 850 to 1,650 nm, reads the reflection with an InGaAs photodiode, and in about 0.33 s (calculated) shows the resin, a confidence mark and the local price grade. Black, dark and low-confidence items read "unknown" and can be passed to WasteWise-ml. A white reference inside the protective cap keeps it calibrated.
 
-The scaffold named an AS7265x-class sensor, but that chip stops at 940 nm, short of the main polymer bands. The precis proposes discrete LEDs and an InGaAs photodiode instead, following the open Plastic Scanner project; this choice is awaiting Amish.
+The scaffold named an AS7265x-class sensor, but that chip stops at 940 nm, short of the main polymer bands. The design uses discrete LEDs and an InGaAs photodiode instead, following the open Plastic Scanner project (decided by Amish, 2026-09-25).
+
+At TRL 3 the calculations (WSC-CAL-001) show the design meets eight of fourteen requirements on paper. Two are not met: results on clear or translucent items in direct sun (R4), and screen legibility in direct sun (R7). Resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -31,11 +33,11 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Printed rugged housing with black TPU light shroud
 - Calibration cap with white PTFE reference
 
-Indicative parts cost is about $163, about 9 % over the $150 target (proposed budget options in [docs/REVIEW.md](docs/REVIEW.md)). The working bill of materials is in [bom/bom.csv](bom/bom.csv).
+The priced bill of materials totals $163.00 ([bom/bom.csv](bom/bom.csv)). Amish accepted this for the first prototype on 2026-09-25 and kept $150 as the volume target.
 
 ## Safety
 
-> **Safety:** The scanner identifies plastic resin only. Never use it to judge whether hazardous, medical or chemical waste is safe to handle. Black and dark plastics absorb NIR and read as unknown. The 18650 lithium-ion cell must be a protected cell, charged only with the built-in charger and kept out of heat. The SWIR LEDs are invisible; do not look into the window during a scan.
+> **Safety:** The scanner identifies plastic resin only. Never use it to judge whether hazardous, medical or chemical waste is safe to handle. Black and dark plastics absorb NIR and read as unknown. The 18650 lithium-ion cell must be a protected cell, charged only with the built-in charger and kept out of heat. The SWIR LEDs are invisible; do not look into the window during a scan, and keep the hardware limit on LED on-time.
 
 ## Repository layout
 
