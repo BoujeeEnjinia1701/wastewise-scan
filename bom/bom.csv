@@ -1,7 +1,16 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-"Multispectral NIR sensor (e.g. AS7265x class, 18 bands)",,,,,,
-Broadband halogen or NIR LED illumination,,,,,,
-ESP32-S3 with display,,,,,,
-Li-ion cell and USB-C charging,,,,,,
-Printed rugged housing with light shroud,,,,,,
-Reference calibration tiles,,,,,,
+1 Top shell,1,"3D-printed PETG, display window and button hole, gasket groove",Self,3.00,make,Material cost only
+2 ESP32-S3 display board,1,"ESP32-S3, 16 MB flash, 1.9 in 170 x 320 IPS display, on-board Li-ion charger (LilyGO T-Display-S3 class)",Distributor or online retailer,20.00,buy,Indicative price; proposed choice awaiting Amish
+3 LED ring (8 bands),1,"LEDs at 850, 940, 1050, 1200, 1300, 1450, 1550 and 1650 nm with constant-current drivers","Specialist LED distributor (Marktech, Roithner or similar)",62.00,buy,Indicative price; SWIR LEDs about $8 to $15 each; band set awaiting Amish
+4 InGaAs photodiode,1,"InGaAs PIN, 1 mm active area, about 900 to 1700 nm",Photonics distributor,30.00,buy,Indicative price
+5 Amplifier and ADC board,1,"Low-noise op-amp transimpedance stage, 24-bit ADC (ADS1220 class), perfboard",Electronics distributor,10.00,buy,Indicative price
+6 Borosilicate window,1,"25 mm diameter, 2 mm thick",Optics or glass supplier,4.00,buy,Indicative price
+7 Light shroud,1,"3D-printed black TPU cone, 18 mm deep, 42 mm rim",Self,2.00,make,Material cost only
+8 18650 Li-ion cell,1,"3000 mAh, 3.6 V nominal, protected",Reputable battery supplier,8.00,buy,Indicative price; avoid unbranded cells
+9 Cell holder and USB-C,1,"18650 holder, protection wiring to board charger, USB-C panel port",Online retailer,4.00,buy,Indicative price
+10 Bottom shell and grip,1,"3D-printed PETG, textured grip, window seat",Self,4.00,make,Material cost only
+11 Scan button,1,"Sealed 16 mm push button plus slide power switch",Electronics distributor,2.00,buy,Indicative price
+12 Calibration cap,1,"3D-printed PETG cap that stores over the shroud",Self,2.00,make,Material cost only
+13 White PTFE reference disc,1,"38 mm disc cut from 3 mm PTFE sheet, sanded matte",Plastics supplier,5.00,buy,Indicative price; not a certified reflectance standard
+14 Resin reference chips,1,"Set of labeled PET, HDPE, PVC, LDPE, PP and PS pieces from known items",Self,2.00,make,Not modeled; for checks and training
+15 Hardware and consumables,1,"M3 screws and inserts, gasket cord, wire, adhesive",Self,5.00,buy,Not modeled; indicative price
