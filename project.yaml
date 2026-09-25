@@ -1,0 +1,22 @@
+# Card metadata consumed by https://amishchadha.com
+name: WasteWise Scan
+slug: wastewise-scan
+area: Circular Materials
+trl: 2                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
+trl_target: 3
+trl_evidence:
+  - docs/01-problem.md
+  - docs/02-concept.md
+  - docs/03-requirements.md
+shortlisted: false
+pitch: >-
+  Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.
+problem: >-
+  Cameras cannot reliably tell PET from PP or HDPE, yet resin type sets the price a waste picker or small recycler receives. Commercial near-infrared sorters cost far too much for informal and small-scale operators.
+budget_usd: 150
+difficulty: 3  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [circular-materials, open-hardware, cern-ohl-s]

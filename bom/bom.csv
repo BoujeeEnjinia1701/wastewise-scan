@@ -1,0 +1,7 @@
+item,qty,spec,supplier,unit_cost_usd,make_buy,notes
+"Multispectral NIR sensor (e.g. AS7265x class, 18 bands)",,,,,,
+Broadband halogen or NIR LED illumination,,,,,,
+ESP32-S3 with display,,,,,,
+Li-ion cell and USB-C charging,,,,,,
+Printed rugged housing with light shroud,,,,,,
+Reference calibration tiles,,,,,,
