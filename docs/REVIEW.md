@@ -172,3 +172,24 @@ The new "What sparked the idea" section traces the design to the Basel Conventio
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. Decided but on hold: measuring cap opacity and window crosstalk stability, an indoor and sun test of the backing step, an outdoor legibility check of the hood, the extended baffle if needed, and firmware beyond a sketch. `trl: 3` and `trl_target: 3` are unchanged.
+
+## Session 2026-09-26: product appearance model and photoreal renders (pilot)
+
+Amish chose WasteWise Scan as the pilot for product-grade renders on 2026-09-26 and asked that every drawing name the project and its repository.
+
+### What was done
+
+- `cad/src/product_model.py` (new): appearance model for renders only. It adds filleted two-part shells with a parting groove, a TPU grip overmold with ribs, a recessed display with cover glass and a lit screen, the 16 mm scan button with a collar, a slide power switch, a USB-C port, four M3 screw heads, a lanyard tab, the shroud, window, LED ring and photodiode, the internals (18650 cell, cradle, ESP32-S3 board, amplifier and ADC board) and the calibration cap and PTFE disc as accessories. All main dimensions come from `cad/src/model.py`; the design model, BOM and calculation note are unchanged.
+- `media/render-hero.png` and `media/render-exploded.png` (new): Blender Cycles renders from `.kit/photoreal.py` in product-studio mode, captioned with the project, the repository and the viewing direction. The README now leads with the hero render.
+- `cad/src/sheets.py`: the title names the device ("Handheld near-infrared resin scanner: general arrangement"); each view label states its scale and viewing direction; the isometric line view is replaced by a product render inset (`media/render-hero-plain.png`); the duplicate "PRELIMINARY" line is removed (the concept label stays).
+- Kit 1.4.0: every sheet and render names the project and `github.com/BoujeeEnjinia1701/wastewise-scan` (from `repo:` in `project.yaml`).
+
+### Differences between the appearance model and model.py (for review, not yet in the design model)
+
+- Button hole 16.8 mm in the appearance model so the 16 mm cap clears the shell; model.py has 13 mm, which makes the cap overlap the shell. Proposed, awaiting Amish: carry 16.8 mm into model.py.
+- USB-C socket block 6 mm long, inside the tail wall; in model.py it overlaps the tail wall. Proposed, awaiting Amish: move it in model.py.
+- Screw bosses at (±68, ±20) mm and a shroud mounting flange are appearance details only.
+
+### TRL
+
+Appearance detail only; no fabrication detail, tolerances or TRL 4 work. `trl: 3` and `trl_target: 3` are unchanged. TRL 4 remains on hold.
