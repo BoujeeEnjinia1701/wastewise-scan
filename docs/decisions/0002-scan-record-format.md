@@ -1,9 +1,9 @@
 ---
 doc_id: WSC-DDR-002
-title: WasteWise Scan shared scan record format (proposal)
+title: WasteWise Scan shared scan record format
 project: WasteWise Scan
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -13,18 +13,22 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: First proposal of a scan record shared with WasteWise-ml, for joint review
+- version: "0.2"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002); option 1 decided for WasteWise Scan (WSC-DDR-003 D12); WasteWise-ml adoption listed as a cross-repo action
 ---
 
-# 0002: Shared scan record format (proposal)
+# 0002: Shared scan record format
 
 - **Date:** 2026-09-25
-- **Status:** proposed. Proposed, awaiting Amish and a joint review with WasteWise-ml.
+- **Status:** accepted for WasteWise Scan (decided by Amish, 2026-09-25: go with recommendation). Adoption by WasteWise-ml is a cross-repo action; field questions 2 and 3 below remain open.
 
 ## Context
 
 Requirement R13 asks that low-confidence scans hand off to WasteWise-ml and that scan records use a shared, documented format. WasteWise-ml labels items with the taxonomy in its `ml/data/taxonomy.yaml` (version 0.2, 2026-09-25): a material class, a grade (for plastics, the resin code, for example "PET (1)" or "other or unknown (7)"), and two non-class outputs, "unsure" and "hazard". WasteWise Scan produces a resin, a confidence, a local price grade and an eight-band spectrum. ReflowEconomy will later want the resin of what it buys.
 
-This note is written in the WasteWise Scan repo only. The WasteWise-ml repo was read and not changed. Nothing here is agreed until Amish and the WasteWise-ml side accept it.
+This note is written in the WasteWise Scan repo only. The WasteWise-ml repo was read and not changed. Amish accepted option 1 on 2026-09-25; the WasteWise-ml side has still to adopt the same fields in its own repo.
 
 ## Options considered
 
@@ -36,7 +40,7 @@ This note is written in the WasteWise Scan repo only. The WasteWise-ml repo was 
 
 Recommendation: option 1, with the fields in Table 1. Exports are CSV (one row per record, spectrum as eight columns) and JSON Lines (one object per line). Labels reuse the WasteWise-ml taxonomy strings exactly, so no mapping is needed.
 
-*Table 1. Shared scan record, version 0.1 (proposed).*
+*Table 1. Shared scan record, version 0.1.*
 
 | Field | Type | Filled by | Meaning |
 | --- | --- | --- | --- |
@@ -63,13 +67,13 @@ On the scanner, each record is stored in a fixed 64-byte binary form (time, sequ
 
 ## Decision
 
-None yet. Proposed, awaiting Amish and a joint review with WasteWise-ml. Questions for that review:
+Decided by Amish, 2026-09-25: go with recommendation. WasteWise Scan uses option 1, one shared record with the fields in Table 1 and a `pair_id` join (recorded in WSC-DDR-003 D12). Questions still open, with no recommendation made:
 
-1. Does WasteWise-ml accept the shared field names and the `pair_id` join, or prefer option 2?
-2. How is `pair_id` created in the field: typed digits, a sticker, or the phone scanning a code on the scanner screen?
-3. Should spectra from consented scans join the WasteWise-ml field dataset, and under which license and ownership terms (WasteWise-ml R14)?
+1. Whether WasteWise-ml accepts the shared field names and the `pair_id` join (cross-repo action; the WasteWise-ml side decides in its own repo).
+2. How `pair_id` is created in the field: typed digits, a sticker, or the phone scanning a code on the scanner screen. Proposed, awaiting Amish.
+3. Whether spectra from consented scans join the WasteWise-ml field dataset, and under which license and ownership terms (WasteWise-ml R14). Proposed, awaiting Amish.
 
 ## Consequences
 
-- If accepted, WasteWise-ml would add the same fields on its side, in its own repo and session.
-- R13 stays "at risk" in WSC-CAL-001 until the format is agreed.
+- WasteWise-ml is asked to add the same fields on its side, in its own repo and session (cross-repo action in `docs/REVIEW.md`).
+- R13 stays "at risk" in WSC-CAL-001 until WasteWise-ml adopts the format.

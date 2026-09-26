@@ -1,4 +1,5 @@
 """WasteWise Scan parametric model (build123d), TRL 3.
+Rev P2 (2026-09-25): clip-on sun hood over the display added (WSC-DDR-003).
 
 Run from the repo root:  python cad/src/model.py
 Exports STEP and STL into cad/step and cad/stl. Massing-plus detail: correct interfaces
@@ -55,6 +56,10 @@ PARAMS = {
     "board_z": 26.5,
     "disp_win_l": 46.0,       # display window in the top shell
     "disp_win_w": 24.0,
+    # sun hood over the display (WSC-DDR-003 D10): clip-on, three walls, open toward the user (tail, -X)
+    "hood_h": 20.0,           # wall height above the top shell
+    "hood_wall": 2.0,
+    "hood_base_t": 1.5,       # frame plate that clips over the display window
     "cell_d": 18.5,           # 18650 cell
     "cell_l": 65.0,
     "cell_x": -30.0,
@@ -85,6 +90,7 @@ def derived(P=PARAMS):
         "led_tilt_deg": tilt,
         "rim_id": rim_id,
         "overall_h": P["body_h"] + P["button_h"] / 2 + P["shroud_h"],
+        "overall_h_hood": P["body_h"] + P["hood_h"] + P["shroud_h"],
     }
 
 
@@ -115,6 +121,14 @@ def parts(P=PARAMS):
     top -= Pos(P["board_x"], 0, P["body_h"] - 1) * Box(P["disp_win_l"], P["disp_win_w"], 4.0)
     top -= Pos(P["button_x"], 0, P["body_h"] - 1) * Cylinder(6.5, 4.0)
     out["top_shell"] = top
+    # sun hood: frame plate with the display opening, walls on both sides and at the head end
+    hl, hw, ht, hh = P["disp_win_l"] + 2 * P["hood_wall"], P["disp_win_w"] + 2 * P["hood_wall"], P["hood_base_t"], P["hood_h"]
+    hz = P["body_h"]
+    hood = Pos(P["board_x"], 0, hz + ht / 2) * (Box(hl + 6, hw + 6, ht) - Box(P["disp_win_l"], P["disp_win_w"], ht + 1))
+    for sy in (-1, 1):
+        hood += Pos(P["board_x"], sy * (P["disp_win_w"] / 2 + P["hood_wall"] / 2), hz + hh / 2) * Box(hl, P["hood_wall"], hh)
+    hood += Pos(P["board_x"] + P["disp_win_l"] / 2 + P["hood_wall"] / 2, 0, hz + hh / 2) * Box(P["hood_wall"], hw, hh)
+    out["sun_hood"] = hood
     out["display_board"] = Pos(P["board_x"], 0, P["board_z"]) * Box(P["board_l"], P["board_w"], P["board_h"])
     out["cell"] = Pos(P["cell_x"], 0, P["cell_z"]) * Rot(0, 90, 0) * Cylinder(P["cell_d"] / 2, P["cell_l"])
     cradle = Pos(P["cell_x"], 0, P["wall"] + 4.0) * Box(P["cell_l"] + 12, P["cell_d"] + 3, 8.0)
@@ -172,7 +186,7 @@ if __name__ == "__main__":
     ps = parts()
     cp = cap_parts()
     export_step(assembly(), str(out / "step" / "wastewise-scan-assembly.step"))
-    for name in ("top_shell", "bottom_shell", "shroud", "led_holder"):
+    for name in ("top_shell", "bottom_shell", "shroud", "led_holder", "sun_hood"):
         export_step(ps[name], str(out / "step" / f"wastewise-scan-{name.replace('_', '-')}.step"))
         export_stl(ps[name], str(out / "stl" / f"wastewise-scan-{name.replace('_', '-')}.stl"))
     export_step(cp["cal_cap"], str(out / "step" / "wastewise-scan-cal-cap.step"))

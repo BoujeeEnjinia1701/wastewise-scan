@@ -32,8 +32,9 @@ parts = [
     Part("Cell holder and USB-C", m["cell_holder_usb"], "#2563EB", 9, (0, 0, 18)),
     Part("Bottom shell and grip", m["bottom_shell"], "#9CA3AF", 10, (0, 0, 0)),
     Part("Scan button", m["button"], "#F59E0B", 11, (0, 0, 128)),
-    Part("Calibration cap", c["cal_cap"], "#374151", 12, (0, 0, -45)),
+    Part("Calibration cap (black)", c["cal_cap"], "#374151", 12, (0, 0, -45)),
     Part("White PTFE reference disc", c["ptfe_disc"], "#F9FAFB", 13, (0, 0, 0)),
+    Part("Clip-on sun hood", m["sun_hood"], "#475569", 14, (0, 0, 118)),
 ]
 
 # Context for scale (hero only): a hand on the grip and a flat HDPE crate panel being scanned.
@@ -48,9 +49,9 @@ context = [Part("Hand", palm + thumb + fingers + wrist, "#C8CDD3"),
 render_all(
     parts, project="WasteWise Scan", title="Handheld resin scanner concept", dwg_no="WSC-DWG-010",
     key_figures=["8 NIR/SWIR bands, 850 to 1,650 nm", "Scan about 0.33 s (WSC-CAL-001)",
-                 "Body 160 x 62 x 34 mm, about 202 g (WSC-CAL-001)",
+                 "Body 160 x 62 x 34 mm, about 209 g with hood (WSC-CAL-001)",
                  "About 22 h per charge on one 18650 (WSC-CAL-001)",
-                 "$163 in parts, prototype (priced BOM)"],
+                 "$164 in parts, prototype (priced BOM)"],
     date="2026-09-25", scale_figure=False, context=context,
     flow={"title": "item flow per 100 mixed plastic items (all values estimates)", "unit": "%",
           "stages": [("Mixed items", 100), ("Scanned", 100), ("Spectrum usable", 88),

@@ -33,14 +33,14 @@ Requirements not met or not shown:
 
 ### Proposed, awaiting Amish
 
-1. **Sensor approach (affects the scaffold's component list, not the pitch).** A: discrete NIR and SWIR LEDs with an InGaAs photodiode (covers the polymer bands). B: AS7265x only, as scaffolded (about 410 to 940 nm, misses the main bands, unlikely to meet R1). C: A plus AS7265x for color (about $70 more). Recommendation: A. The pitch still reads true ("low-cost multispectral sensor", "about a second"), so `project.yaml` pitch and problem are unchanged.
-2. **Budget.** (a) Raise `budget_usd` to $175; (b) cut to six bands (drop 1,050 and 1,300 nm, saving about $18, to about $145) at some accuracy risk; (c) keep $150 as a volume target and accept about $163 for the prototype. Recommendation: (c) for now, then (b) if the band study at TRL 3 shows six bands suffice. `budget_usd` is unchanged.
-3. Controller: LilyGO T-Display-S3-class board (no custom PCB) rather than a bare ESP32-S3 with a separate display.
-4. Band set: 850, 940, 1,050, 1,200, 1,300, 1,450, 1,550 and 1,650 nm, to be confirmed on reference spectra.
-5. Classifier: linear discriminant analysis or a small decision tree on the device first; share labeled data with Plastic Scanner and WasteWise-ml where licenses allow.
-6. White PTFE reference in the storage cap as the calibration method.
-7. One protected 18650 cell rather than a flat LiPo pouch.
-8. First partner and region for co-design and the first price table.
+1. **Sensor approach (affects the scaffold's component list, not the pitch).** A: discrete NIR and SWIR LEDs with an InGaAs photodiode (covers the polymer bands). B: AS7265x only, as scaffolded (about 410 to 940 nm, misses the main bands, unlikely to meet R1). C: A plus AS7265x for color (about $70 more). Recommendation: A. The pitch still reads true ("low-cost multispectral sensor", "about a second"), so `project.yaml` pitch and problem are unchanged. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-001 D1)
+2. **Budget.** (a) Raise `budget_usd` to $175; (b) cut to six bands (drop 1,050 and 1,300 nm, saving about $18, to about $145) at some accuracy risk; (c) keep $150 as a volume target and accept about $163 for the prototype. Recommendation: (c) for now, then (b) if the band study at TRL 3 shows six bands suffice. `budget_usd` is unchanged. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-001 D2)
+3. Controller: LilyGO T-Display-S3-class board (no custom PCB) rather than a bare ESP32-S3 with a separate display. Decided by Amish, 2026-09-25: go with recommendation. (D3)
+4. Band set: 850, 940, 1,050, 1,200, 1,300, 1,450, 1,550 and 1,650 nm, to be confirmed on reference spectra. Decided by Amish, 2026-09-25: go with recommendation. (D4)
+5. Classifier: linear discriminant analysis or a small decision tree on the device first; share labeled data with Plastic Scanner and WasteWise-ml where licenses allow. Decided by Amish, 2026-09-25: go with recommendation. (D5)
+6. White PTFE reference in the storage cap as the calibration method. Decided by Amish, 2026-09-25: go with recommendation. (D6)
+7. One protected 18650 cell rather than a flat LiPo pouch. Decided by Amish, 2026-09-25: go with recommendation. (D7)
+8. First partner and region for co-design and the first price table. No recommendation; still proposed, awaiting Amish.
 
 ### Safety concerns
 
@@ -101,10 +101,10 @@ D1 to D7 in WSC-DDR-001: discrete LEDs with an InGaAs photodiode (sensor option 
 1. **First partner and region (O1).** No recommendation; partners are picked per area later.
 2. **Who the $150 volume target is for (O2).** No recommendation.
 3. **Extended InGaAs band for PE versus PP (O3).** No recommendation yet; the next step is a band study on published reference spectra.
-4. **Shared scan record (O4, WSC-DDR-002).** Recommendation: one shared record with a `pair_id` join; needs a joint review with the WasteWise-ml side.
-5. **Clear items in sun (R4, new).** Options: (a) modulate the LEDs at about 2 kHz and demodulate synchronously, which rejects ambient changes but needs a faster ADC or an analog demodulator (a few dollars more); (b) instruct users to back clear items with the calibration cap or scan them in shade; (c) restate R4 to cover opaque items only. Recommendation: (b) for the first prototype and (a) studied on paper before any build; (c) only if (a) fails. This changes the R4 target or the user workflow, so it is Amish's.
-6. **Display in direct sun (R7, new).** Options: (a) a printed visor over the display (about 5.2:1 when shaded, negligible cost); (b) a sunlight-readable reflective display such as a memory LCD (about $20 to $40 more, over budget); (c) restate R7 to "legible when shaded by the hand or visor". Recommendation: (a), keeping large color and icon cues.
-7. **Window crosstalk (new).** Options: (a) an open-air reading in the calibration routine to subtract the crosstalk offset (firmware only); (b) extend the baffle through the glass with separate LED and detector windows (mechanical change); (c) an anti-reflection coated window (cost). Recommendation: (a) now, and (b) if the offset proves unstable with window dirt.
+4. **Shared scan record (O4, WSC-DDR-002).** Recommendation: one shared record with a `pair_id` join; needs a joint review with the WasteWise-ml side. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-003 D12; WasteWise-ml adoption is a cross-repo action)
+5. **Clear items in sun (R4, new).** Options: (a) modulate the LEDs at about 2 kHz and demodulate synchronously, which rejects ambient changes but needs a faster ADC or an analog demodulator (a few dollars more); (b) instruct users to back clear items with the calibration cap or scan them in shade; (c) restate R4 to cover opaque items only. Recommendation: (b) for the first prototype and (a) studied on paper before any build; (c) only if (a) fails. This changes the R4 target or the user workflow, so it is Amish's. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-003 D8, D9)
+6. **Display in direct sun (R7, new).** Options: (a) a printed visor over the display (about 5.2:1 when shaded, negligible cost); (b) a sunlight-readable reflective display such as a memory LCD (about $20 to $40 more, over budget); (c) restate R7 to "legible when shaded by the hand or visor". Recommendation: (a), keeping large color and icon cues. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-003 D10)
+7. **Window crosstalk (new).** Options: (a) an open-air reading in the calibration routine to subtract the crosstalk offset (firmware only); (b) extend the baffle through the glass with separate LED and detector windows (mechanical change); (c) an anti-reflection coated window (cost). Recommendation: (a) now, and (b) if the offset proves unstable with window dirt. Decided by Amish, 2026-09-25: go with recommendation. (WSC-DDR-003 D11)
 
 ### Safety concerns
 
@@ -122,3 +122,53 @@ D1 to D7 in WSC-DDR-001: discrete LEDs with an InGaAs photodiode (sensor option 
 ### Recommended next step
 
 Decide items 5 to 7 above, and name a partner and region when ready. Then a paper-only follow-up within TRL 3: a band study on published reference spectra (R1, O3, and whether six bands suffice) and the joint review of WSC-DDR-002 with WasteWise-ml. **TRL 4 is on hold by Amish's instruction**, and no TRL 4 work was started. For reference only, TRL 4 would need: measured LED spectra and powers and the photodiode's responsivity curve; a lab test article of the optical head scanning labeled resin chips, indoors and in sun; a display legibility check outdoors; a drop and spray check of printed shells; a test report (TST, `environment: lab`) and build log entries.
+
+## Session 2026-09-25: recommendations accepted
+
+On 2026-09-25 Amish wrote: "i accept all your recommendations, go with them across all repos." Every open item that carried a recommendation is now "Decided by Amish, 2026-09-25: go with recommendation". The record is `docs/decisions/0003-recommendations-accepted.md` (WSC-DDR-003 v0.1). It is numbered 0003, not 0002, because WSC-DDR-002 was already the shared scan record.
+
+### Decisions applied and what changed
+
+| # | Decision | Before | After |
+| --- | --- | --- | --- |
+| D8 | Clear items in sun: back them with the cap or scan in shade; LED modulation checked on paper | R4 not met; error 6.6 times the 1,650 nm signal on a clear item in sun | R4 met by estimate: 0.36 % of signal on backed clear items, 0.13 % on opaque items; firmware prompt "shade or back with cap" when the dark level exceeds 0.71 times the weakest band reading. Modulation at 2 kHz still leaves 23 % on an unbacked clear item, so it does not replace the backing step |
+| D9 | Calibration cap printed in black PETG so it can back clear items | White-reference cap only | BOM item 12 respecified, cost unchanged; safety note on backing sharp items added |
+| D10 | Clip-on sun hood over the display | R7 not met, 1.6:1 in direct sun; mass 202 g; parts $163.00 | R7 at risk: 5.2:1 where the hood shades the screen (fully shaded with the sun 50° or more off the normal on a side, 67° on the head end); 1.6:1 with the sun near the normal or over the open side. Mass 209 g (229 g with cap); parts $164.00; new BOM item 14 at $1.00 |
+| D11 | Open-air crosstalk reading in the calibration routine; extended baffle if unstable | Crosstalk about equal to the signal, not handled | Offset subtracted at each calibration; WSC-CAL-001 C7 shows it must stay within 0.5 % of itself, so the extended baffle is probably needed (proof needs measurement, TRL 4) |
+| D12 | One shared scan record with a `pair_id` join (WSC-DDR-002 option 1) | Proposed | Decided for WasteWise Scan; R13 stays at risk until WasteWise-ml adopts it |
+
+Budget: `budget_usd` stays $150 (volume target, WSC-DDR-001 D2). The accepted prototype figure moves from about $163 to about $164 with the hood; R12 text updated.
+
+Files changed: WSC-PRC-001 v0.3 to v0.4, WSC-REQ-001 v0.3 to v0.4 (R4, R6, R11, R12 restated; R7 and R13 status), WSC-CAL-001 v0.1 to v0.2 and `docs/04-calcs/sizing.py` (new lines C7, D6 to D8, I3, I4), WSC-DDR-001 v0.1 to v0.2 (O4 decided), WSC-DDR-002 v0.1 to v0.2, new WSC-DDR-003 v0.1; `cad/src/model.py` (sun hood; STEP and STL for it exported), `cad/src/sheets.py` and WSC-DWG-001 Rev P1 to P2; `cad/src/concept_media.py` and all media regenerated (hood is callout 14); `bom/bom.csv` (16 lines) and `bom/bom-notes.md`; `project.yaml` (DDR-003 in `trl_evidence`; pitch, problem and budget unchanged); `README.md` (Concept rationale, Burning platform, Where it could be used, What sparked the idea; budget, concept, components and safety updated). All PDFs re-rendered with the designmolecule.com footer.
+
+The new "What sparked the idea" section traces the design to the Basel Convention plastic waste amendments (May 2019, in effect 1 January 2021), which split clean single-polymer scrap (B3011) from mixed or PVC-containing plastic (Y48). Sources checked by web fetch: UNEP press release, US EPA overview, OECD 2022 press release, World Bank *What a Waste 3.0* page, WIEGO waste pickers page, European Commission packaging page.
+
+### Requirement status (WSC-CAL-001 v0.2)
+
+| Status | Requirements |
+| --- | --- |
+| Not met | None (R4 and R7 were not met before this session) |
+| At risk | R1 (1,650 nm band clipped by the InGaAs cutoff), R7 (hood cannot shade every sun angle), R13 (record not yet adopted by WasteWise-ml) |
+| Not verifiable at TRL 3 | R3, R10 |
+| Met | R2, R4 (estimate), R5, R6, R8, R9, R11, R12, R14 |
+
+### Still awaiting Amish (no recommendation was made)
+
+1. First partner and region for co-design and the first price table (O1).
+2. Who the $150 volume target is for (O2).
+3. Extended InGaAs band for PE versus PP (O3); a paper band study on published reference spectra comes first.
+4. How `pair_id` is created in the field (WSC-DDR-002, question 2).
+5. Whether consented spectra join the WasteWise-ml dataset, and on what terms (WSC-DDR-002, question 3).
+
+### Cross-repo actions
+
+- **WasteWise-ml:** adopt the shared scan record fields and the `pair_id` join of WSC-DDR-002 v0.2 in its own repo (D12). Not edited from here.
+
+### Safety
+
+- New: backing a clear item with the cap puts the hand near the item; sharp, broken or contaminated items are to be scanned in shade instead. Added to WSC-PRC-001 and the README.
+- Unchanged: resin only, never a safety judgment; protected 18650 cell; hardware limit on LED on-time.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. Decided but on hold: measuring cap opacity and window crosstalk stability, an indoor and sun test of the backing step, an outdoor legibility check of the hood, the extended baffle if needed, and firmware beyond a sketch. `trl: 3` and `trl_target: 3` are unchanged.

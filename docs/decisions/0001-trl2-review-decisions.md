@@ -3,7 +3,7 @@ doc_id: WSC-DDR-001
 title: WasteWise Scan TRL 2 review decisions
 project: WasteWise Scan
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's decisions on the TRL 2 review items and the items that remain open
+- version: "0.2"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002); O4 decided, see WSC-DDR-003 D12
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items D1 to D7; items O1 to O4 remain proposed
+- **Status:** accepted for items D1 to D7 and, since v0.2, O4 (WSC-DDR-003 D12); items O1 to O3 remain proposed
 
 ## Context
 
@@ -44,18 +48,18 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 | D6 | Calibration | A white PTFE reference disc in the storage cap. Decided by Amish, 2026-09-25: go with recommendation. |
 | D7 | Battery | One protected 18650 Li-ion cell rather than a flat LiPo pouch. Decided by Amish, 2026-09-25: go with recommendation. |
 
-*Table 2. Items that remain open (no recommendation was made).*
+*Table 2. Items left open at v0.1. O1 to O3 carry no recommendation and remain open; O4 had a recommendation and is now decided.*
 
 | # | Item | Status |
 | --- | --- | --- |
 | O1 | First partner and region for co-design and the first price table (REVIEW item 8; PRB open questions 1 and 2) | Proposed, awaiting Amish. Per the portfolio decision, partners are picked per area later. |
 | O2 | Whether the $150 target is the price a cooperative would pay or should be lower for individual pickers (PRB open question 3) | Proposed, awaiting Amish. D2 fixes $150 as the volume target but not who pays it. |
 | O3 | Whether to add a 1,700 to 1,750 nm band on an extended InGaAs detector to separate PE from PP (PRC open question 2) | Proposed, awaiting Amish. WSC-CAL-001 section B shows the 1,650 nm band reaches only the short edge of that region. |
-| O4 | Scan record format shared with WasteWise-ml and ReflowEconomy (PRC open question 5) | Proposed, awaiting Amish. A draft is in WSC-DDR-002. |
+| O4 | Scan record format shared with WasteWise-ml and ReflowEconomy (PRC open question 5) | Decided by Amish, 2026-09-25: go with recommendation. One shared record with a `pair_id` join (WSC-DDR-002 option 1); recorded in WSC-DDR-003 D12. Adoption by WasteWise-ml is a cross-repo action. |
 
 ## Consequences
 
 - WSC-PRB-001, WSC-PRC-001 and WSC-REQ-001 move to v0.3 with these choices no longer marked "proposed".
 - R12 now reads as a $150 volume target with the first prototype accepted at about $163.
 - WSC-CAL-001, the parametric model, drawing WSC-DWG-001 and the BOM use the eight-band, single-photodiode, T-Display-S3, 18650 design.
-- New items raised by WSC-CAL-001 (sunlight through clear items, display legibility, window crosstalk) are listed in `docs/REVIEW.md` as proposed, awaiting Amish. They are not decided here.
+- New items raised by WSC-CAL-001 (sunlight through clear items, display legibility, window crosstalk) were decided on 2026-09-25 and are recorded in WSC-DDR-003, not here.

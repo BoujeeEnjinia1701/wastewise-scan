@@ -1,4 +1,4 @@
-"""WasteWise Scan general arrangement sheet WSC-DWG-001, Rev P1 (TRL 3).
+"""WasteWise Scan general arrangement sheet WSC-DWG-001, Rev P2 (TRL 3).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/WSC-DWG-001.svg, .pdf and .png from the parametric model in
@@ -79,10 +79,11 @@ def main():
     sviews = views_of(sec, work / "sec", hidden=())
     sbb = sec.bounding_box()
 
-    s = Sheet(project="WasteWise Scan", title="General arrangement, handheld resin scanner", dwg_no="WSC-DWG-001", rev="P1",
+    s = Sheet(project="WasteWise Scan", title="General arrangement, handheld resin scanner", dwg_no="WSC-DWG-001", rev="P2",
               author="Amish Chadha", date=DATE, scale=1.0, theme="technical",
               material="PETG shells, TPU shroud, borosilicate window; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
+                         ("P2", "Sun hood added; mass updated (WSC-DDR-003)", DATE, "AC")])
     s._layers.append(_t(16, 29, "PRELIMINARY, NOT FOR FABRICATION", 3.2, 600, "#B45309"))
     k = 1.0
     L = []
@@ -153,15 +154,16 @@ def main():
     s._layers += L
     s.add_svg(views["iso"], 30, 214, 180, 42, label="Isometric view", sublabel="Not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
-        f"Body {P['body_l']:.0f} x {P['body_w']:.0f} x {P['body_h']:.0f}, shell split at {P['z_split']:.0f}; {bb.size.Z:.0f} high with button and shroud",
+        f"Body {P['body_l']:.0f} x {P['body_w']:.0f} x {P['body_h']:.0f}, shell split at {P['z_split']:.0f}; {bb.size.Z:.0f} high with hood and shroud",
         f"Shroud {P['shroud_h']:.0f} deep, {P['shroud_rim_d']:.0f} dia at the rim; sets detector to item {D['d_pd_item']:.0f}",
         f"Display window {P['disp_win_l']:.0f} x {P['disp_win_w']:.0f} over a T-Display-S3 class board (envelope assumed)",
+        f"Clip-on sun hood, walls {P['hood_h']:.0f} high on both sides and head end, open toward the user",
         f"18650 cell on the body axis, {P['cell_z']:.0f} above base; USB-C in the tail wall",
         f"Scan button {P['button_d']:.0f} dia, {P['button_x'] - P['board_x']:.0f} ahead of the display center",
         f"Cal. cap {P['cap_od']:.0f} OD x {P['cap_h']:.0f}, PTFE disc {P['ptfe_d']:.0f} x {P['ptfe_t']:.0f}; stores over the shroud",
-        "Mass about 202 g, 222 g with cap (WSC-CAL-001 A3)",
+        "Mass about 209 g, 229 g with cap (WSC-CAL-001 A3)",
         "Third-angle; X along the body, Z up; base of body Z = 0",
-    ], x=226.8, y=166, width=190)
+    ], x=226.8, y=162, width=190)
     out = s.save(ROOT / "cad" / "drawings" / "WSC-DWG-001")
     shutil.rmtree(work, ignore_errors=True)
     print(f"wrote {out} and .pdf, .png")

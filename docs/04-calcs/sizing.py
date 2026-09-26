@@ -6,6 +6,8 @@ tagged like [C3]. Geometry comes from cad/src/model.py (PARAMS, derived() and th
 solids), so the note, the STEP files and drawing WSC-DWG-001 use the same dimensions. The BOM
 total is read from bom/bom.csv and the budget from project.yaml. These are first-principles
 estimates for a paper proof of concept; every assumption is set in the ASSUMPTIONS block.
+v0.2 (2026-09-25): decisions of WSC-DDR-003 applied (sun hood, backing step and dark-level
+prompt for clear items, open-air crosstalk reading, paper check of LED modulation).
 """
 import csv
 import sys
@@ -51,6 +53,10 @@ A = {
     "ambient_drift": 0.01,      # relative change of ambient light per 10 ms from hand movement (assumed)
     "dark_gap_ms": 7.0,         # time between a band reading and the mean of its two dark readings
     "min_snr": 200.0,           # needed to resolve 0.5 % reflectance differences
+    "err_limit": 0.005,         # largest acceptable ambient error, relative to the band signal (0.5 %)
+    "leak_backed": 1.0e-3,      # fraction of the clear-item through-light left when the item is backed with the black cap
+    "mod_hz": 2000.0,           # LED modulation frequency for the synchronous demodulation option (paper check only)
+    "xtalk_change": 0.10,       # assumed change of the window crosstalk from dirt or scratches between open-air readings
     # power
     "i_mcu_ma": 45.0, "i_display_ma": 60.0, "i_afe_ma": 3.0,        # ESP32-S3 at 240 MHz, radio off; display at full backlight
     "i_led_ma": 100.0, "v_cell": 3.6, "cap_mah": 3000.0, "usable": 0.80,
@@ -63,6 +69,7 @@ A = {
     "m_button": 5.0, "m_usb": 2.0, "m_fixings": 10.0,
     # display legibility
     "disp_nits": 400.0, "disp_black_nits": 0.4, "screen_rho": 0.02,   # diffuse-equivalent screen reflectance
+    "sun_angles": (30, 45, 60, 75),   # deg, sun direction from the screen normal, for the hood check
     "E_sun_lux": 100e3, "E_shade_lux": 15e3, "cr_needed": 3.0,
     # drop and temperature
     "drop_h": 1.2, "stop_shell_m": 1.0e-3, "stop_tpu_m": 10.0e-3,
@@ -102,8 +109,9 @@ ps = parts(P)
 cp = cap_parts(P)
 bb = scanner(P).bounding_box()
 body_l, body_w, body_h = P["body_l"], P["body_w"], P["body_h"]
-say("A1", f"Body {body_l:.0f} x {body_w:.0f} x {body_h:.0f} mm; with button and shroud {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm; "
-          f"shroud {P['shroud_h']:.0f} mm deep, rim {P['shroud_rim_d']:.0f} mm outside and {D['rim_id']:.0f} mm inside")
+say("A1", f"Body {body_l:.0f} x {body_w:.0f} x {body_h:.0f} mm; overall with hood, button and shroud {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm; "
+          f"shroud {P['shroud_h']:.0f} mm deep, rim {P['shroud_rim_d']:.0f} mm outside and {D['rim_id']:.0f} mm inside; "
+          f"sun hood {P['hood_h']:.0f} mm above the top shell")
 vol = {k: v.volume / 1000.0 for k, v in {**ps, **cp}.items()}
 m = {
     "Top shell (PETG)": vol["top_shell"] * A["rho_petg"],
@@ -114,6 +122,7 @@ m = {
     "Window (borosilicate)": vol["window"] * A["rho_glass"],
     "18650 cell": A["m_cell"],
     "Display board": A["m_board"],
+    "Sun hood (PETG)": vol["sun_hood"] * A["rho_petg"],
     "LEDs, photodiode, AFE board": A["m_leds"] + A["m_pd"] + A["m_afe"],
     "Button and switch": A["m_button"],
     "Fixings, gasket, wire": A["m_fixings"],
@@ -184,6 +193,10 @@ x_ratio = (A["led_off_axis_rel"] * A["R_fresnel"] * A_det / L_img ** 2 / omega) 
 say("C5", f"Window crosstalk through the glass under the baffle: path {L_img * 1e3:.1f} mm, about {x_ratio * 100:.0f} % of the "
           f"signal from a 0.5-reflectance item (order of magnitude)")
 black_ratio = A["rho_black"] / A["rho_item"]
+resid = x_ratio * A["xtalk_change"]
+say("C7", f"Open-air reading in the calibration routine removes the fixed crosstalk offset; a {A['xtalk_change'] * 100:.0f} % change of that offset "
+          f"from window dirt leaves about {resid * 100:.0f} % of the signal; to stay under {A['err_limit'] * 100:.1f} % the offset must stay within "
+          f"{A['err_limit'] / x_ratio * 100:.1f} % of itself between open-air readings")
 say("C6", f"Black item (reflectance {A['rho_black']}) returns {black_ratio * 100:.0f} % of a typical item's signal; "
           f"an 'unknown' threshold at mean reflectance 0.08 separates it with SNR over {worst_snr * A['rho_black'] / A['rho_clear']:.0f}")
 STATUS["R3"] = ("Not verifiable at TRL 3", "black items fall below the 0.08 reflectance threshold; wrong-result rate needs item data", "2 % or fewer wrong")
@@ -210,8 +223,25 @@ err_opq = err * A["leak_opaque"]
 _, _, V1650o = signal(1650, A["rho_item"], A["Rf"])
 say("D5", f"Opaque item (rim leak {A['leak_opaque']:.0e} of the clear case): drift error {err_opq * 1e6:.1f} µV against {V1650o * 1e3:.2f} mV, "
           f"{err_opq / V1650o * 100:.2f} % of signal")
-STATUS["R4"] = ("Not met", f"opaque items: error {err_opq / V1650o * 100:.2f} % of signal; clear items in sun: ambient {ratio:.0f} x signal, drift error {err / V1650c:.1f} x signal",
-                "same result in 100 klx sun")
+# D6: decided option (b): back clear and translucent items with the (black) calibration cap
+rho_backed = A["rho_clear"] + A["T_diffuse_clear"] ** 2 * A["rho_white"]
+_, _, V1650b = signal(1650, rho_backed, A["Rf"])
+err_b = err * A["leak_backed"]
+say("D6", f"Clear item backed with the cap (PTFE behind the wall, black cap outside): effective reflectance {rho_backed:.2f}, "
+          f"1,650 nm signal {V1650b * 1e3:.2f} mV; through-light cut to {A['leak_backed']:.0e}; drift error {err_b * 1e6:.1f} µV, "
+          f"{err_b / V1650b * 100:.2f} % of signal (limit {A['err_limit'] * 100:.1f} %)")
+k_prompt = A["err_limit"] / (A["ambient_drift"] * A["dark_gap_ms"] / 10.0)
+say("D7", f"Firmware rule: show 'shade or back with cap' instead of a result when the mean dark level exceeds {k_prompt:.2f} times the "
+          f"weakest band reading. Clear unbacked in sun {I_amb * A['Rf'] / V1650c:.0f} (prompt); backed {I_amb * A['Rf'] * A['leak_backed'] / V1650b:.2f}; "
+          f"opaque {I_amb * A['Rf'] * A['leak_opaque'] / V1650o:.2f} (result shown)")
+gap_mod = 1000.0 / A["mod_hz"] / 2
+err_mod = A["ambient_drift"] * (gap_mod / 10.0) * I_amb * A["Rf"]
+say("D8", f"Paper check of option (a), LEDs modulated at {A['mod_hz'] / 1000:.0f} kHz: light-to-dark gap {gap_mod:.2f} ms; clear unbacked item in sun "
+          f"still leaves {err_mod / V1650c * 100:.0f} % of the 1,650 nm signal; needs an ADC of {4 * A['mod_hz'] / 1000:.0f} kS/s or more or an analog demodulator")
+r4_ok = err_b / V1650b <= A["err_limit"] and err_opq / V1650o <= A["err_limit"]
+STATUS["R4"] = ("Met" if r4_ok else "Not met",
+                f"opaque {err_opq / V1650o * 100:.2f} %, clear backed with cap {err_b / V1650b * 100:.2f} % of signal; clear unbacked in sun refused by the dark-level prompt",
+                "same result in 100 klx sun; clear items backed with the cap")
 
 # ------------------------------------------------------------------ E. timing
 print("E. Scan timing (R2)")
@@ -274,7 +304,20 @@ cr_shade, Lr_shade = cr(A["E_shade_lux"])
 say("I1", f"Direct sun {A['E_sun_lux'] / 1e3:.0f} klx: reflected {Lr_sun:.0f} cd/m2 on a {A['disp_nits']:.0f} cd/m2 screen, contrast {cr_sun:.1f}:1 "
           f"(needed {A['cr_needed']:.0f}:1)")
 say("I2", f"Screen shaded from the sun ({A['E_shade_lux'] / 1e3:.0f} klx sky light): contrast {cr_shade:.1f}:1")
-STATUS["R7"] = ("Not met" if cr_sun < A["cr_needed"] else "Met", f"{cr_sun:.1f}:1 in direct sun, {cr_shade:.1f}:1 shaded", f"{A['cr_needed']:.0f}:1 in direct sun")
+# I3: decided option (a): clip-on sun hood, walls on both sides and at the head end, open toward the user
+from math import tan
+ws, lh, hh = P["disp_win_w"], P["disp_win_l"], P["hood_h"]
+full_side, full_head = degrees(atan(ws / hh)), degrees(atan(lh / hh))
+fr = []
+for ang in A["sun_angles"]:
+    f_side = min(1.0, hh * tan(radians(ang)) / ws)
+    f_head = min(1.0, hh * tan(radians(ang)) / lh)
+    fr.append(f"{ang} deg: {f_side * 100:.0f} % (side), {f_head * 100:.0f} % (head)")
+say("I3", f"Sun hood {hh:.0f} mm high over a {lh:.0f} x {ws:.0f} mm window: screen fully shaded when the sun is at least {full_side:.0f} deg "
+          f"from the screen normal on a side, or {full_head:.0f} deg on the head end; open toward the user. Shaded share: " + "; ".join(fr))
+say("I4", f"Shaded part of the screen {cr_shade:.1f}:1; sun over the open side or near the screen normal still gives {cr_sun:.1f}:1")
+STATUS["R7"] = ("At risk", f"{cr_shade:.1f}:1 where the hood shades the screen; {cr_sun:.1f}:1 with the sun near the screen normal or over the open side",
+                f"{A['cr_needed']:.0f}:1 in direct sun")
 
 # ------------------------------------------------------------------ J. drop and temperature
 print("J. Drop and temperature (R10, R11)")
@@ -290,7 +333,7 @@ say("J3", f"LED output drifts {abs(A['led_tc']) * 100:.1f} %/°C: the 5 % drift 
 STATUS["R10"] = ("Not verifiable at TRL 3", f"corner drop about {decel_shell:.0f} g; cell needs {A['m_cell'] / 1000 * g * decel_shell:.0f} N retention", "1.2 m drop, IP54, 0 to 45 °C")
 STATUS["R11"] = ("Met", f"PTFE cap reference; 5 % drift after about {dT:.0f} °C", "check in 10 s; warn at 5 %")
 
-PROTO_ACCEPTED = 163.0   # USD, prototype parts cost accepted by Amish on 2026-09-25 (WSC-DDR-001 D2)
+PROTO_ACCEPTED = 164.0   # USD: $163 accepted by Amish on 2026-09-25 (WSC-DDR-001 D2) plus the $1 sun hood (WSC-DDR-003)
 # ------------------------------------------------------------------ K. cost
 print("K. Cost (R12)")
 rows = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
@@ -299,12 +342,12 @@ budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"]
 optics = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows if r["item"].startswith(("3 ", "4 ")))
 say("K1", f"BOM {len(rows)} lines, total ${total:.2f}; budget_usd ${budget:.0f} (volume target); "
           f"{(total / budget - 1) * 100:+.1f} %; LEDs and photodiode ${optics:.2f} ({optics / total * 100:.0f} %)")
-STATUS["R12"] = ("Met" if total <= PROTO_ACCEPTED else "Not met", f"${total:.2f} prototype", "about $163 prototype (accepted); $150 volume target")
+STATUS["R12"] = ("Met" if total <= PROTO_ACCEPTED else "Not met", f"${total:.2f} prototype", "about $164 prototype (accepted plus hood); $150 volume target")
 
 # ------------------------------------------------------------------ L. requirement table
 print("L. Requirement status")
 STATUS["R8"] = ("Met", "price table on the device, offline", "editable local grades")
-STATUS["R13"] = ("At risk", "hand-off designed; shared record drafted (WSC-DDR-002), not yet agreed with WasteWise-ml", "shared documented format")
+STATUS["R13"] = ("At risk", "shared record decided on this side (WSC-DDR-002 v0.2); not yet adopted by WasteWise-ml", "shared documented format")
 order = ["Not met", "At risk", "Not verifiable at TRL 3", "Met"]
 for rid in sorted(STATUS, key=lambda k: int(k[1:])):
     s, v, t = STATUS[rid]

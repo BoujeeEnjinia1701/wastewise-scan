@@ -9,8 +9,9 @@ item,qty,spec,supplier,unit_cost_usd,make_buy,notes
 8 18650 Li-ion cell,1,"3000 mAh, 3.6 V nominal, protected, from a named cell maker",Reputable battery distributor,8.00,buy,Avoid unbranded cells; about 47 g
 9 Cell holder and USB-C,1,"Printed cradle, protection wiring to the board charger, USB-C panel socket",Online retailer (socket); self (cradle),4.00,buy,Cradle must hold the cell against about 550 N on a corner drop (WSC-CAL-001 J2)
 10 Bottom shell and grip,1,"3D-printed PETG, textured grip, window seat, optical aperture; about 37 cm3",Self (PETG filament),4.00,make,Material cost only
-11 Scan button,1,"Sealed 16 mm push button plus slide power switch",Electronics distributor,2.00,buy,Catalog-level price
-12 Calibration cap,1,"3D-printed PETG cap, 48 mm OD x 24 mm, stores over the shroud",Self (PETG filament),2.00,make,Material cost only
+11 Scan button,1,Sealed 16 mm push button plus slide power switch,Electronics distributor,2.00,buy,Catalog-level price
+12 Calibration cap,1,"3D-printed black PETG cap, 48 mm OD x 24 mm, stores over the shroud; also backs clear items in sun",Self (PETG filament),2.00,make,Material cost only; black so it blocks light through clear items when used as a backing (WSC-DDR-003 D9)
 13 White PTFE reference disc,1,"38 mm disc cut from 3 mm PTFE sheet, sanded matte",Plastics stockist,5.00,buy,Not a certified reflectance standard
-14 Resin reference chips,1,"Set of labeled PET, HDPE, PVC, LDPE, PP and PS pieces from known items",Self (collected items),2.00,make,Not modeled; for checks and training
-15 Hardware and consumables,1,"M3 screws and heat-set inserts, gasket cord, wire, adhesive",Hardware store or electronics distributor,5.00,buy,Not modeled
+14 Sun hood,1,"3D-printed PETG clip-on hood, walls 20 mm high on both sides and the head end of the display window, open toward the user; about 5.8 cm3",Self (PETG filament),1.00,make,"Material cost only; about 7 g (WSC-CAL-001 A2, I3); decided by Amish 2026-09-25 (WSC-DDR-003 D10)"
+15 Resin reference chips,1,"Set of labeled PET, HDPE, PVC, LDPE, PP and PS pieces from known items",Self (collected items),2.00,make,Not modeled; for checks and training
+16 Hardware and consumables,1,"M3 screws and heat-set inserts, gasket cord, wire, adhesive",Hardware store or electronics distributor,5.00,buy,Not modeled
