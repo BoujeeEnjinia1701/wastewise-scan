@@ -79,16 +79,17 @@ def main():
     sviews = views_of(sec, work / "sec", hidden=())
     sbb = sec.bounding_box()
 
-    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P2",
+    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P3",
               author="Amish Chadha", date=DATE, scale=1.0, theme="technical",
               material="PETG shells, TPU shroud, borosilicate window; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "Sun hood added; mass updated (WSC-DDR-003)", DATE, "AC")])
+                         ("P2", "Sun hood added; mass updated (WSC-DDR-003)", DATE, "AC"),
+                         ("P3", "Layout and labels tidied", DATE, "AC")])
     k = 1.0
     L = []
 
     # top view at 1:1 (from +Z): X to the right, Y up the sheet
-    tx, ty = 40.0, 48.0
+    tx, ty = 40.0, 40.0
     s.add_svg(views["top"], tx, ty, scale=k, label="Top view", sublabel="Scale 1:1; looking down on the display (along -Z); scan head at right")
     Xt = lambda mx: tx + (mx - bb.min.X) * k
     Yt = lambda my: ty + (bb.max.Y - my) * k
@@ -106,7 +107,7 @@ def main():
 
     # front view at 1:1 (from -Y): X to the right, Z up
     fvw, fvh = _viewbox(Path(views["front"]).read_text())[2:]
-    fx, fy = tx, ty + P["body_w"] + 30
+    fx, fy = tx, ty + P["body_w"] + 24
     s.add_svg(views["front"], fx, fy, scale=k, label="Front view", sublabel="Scale 1:1; side elevation looking along +Y; scan head at right")
     X = lambda mx: fx + (mx - bb.min.X) * k
     Z = lambda mz: fy + (bb.max.Z - mz) * k
@@ -118,7 +119,6 @@ def main():
     L += [ext(X(hx - P["shroud_rim_d"] / 2), Z(D["z_item"]) + 1, X(hx - P["shroud_rim_d"] / 2), Z(D["z_item"]) + 8),
           ext(X(hx + P["shroud_rim_d"] / 2), Z(D["z_item"]) + 1, X(hx + P["shroud_rim_d"] / 2), Z(D["z_item"]) + 8)]
     L += dim_h(X(hx - P["shroud_rim_d"] / 2), X(hx + P["shroud_rim_d"] / 2), Z(D["z_item"]) + 7, f"{P['shroud_rim_d']:.0f} rim dia", above=False)
-    L.append(_t(X(bb.min.X), Z(D["z_item"]) + 1.5, "Item surface (shroud rim)", 2.2, 400, MUTED))
 
     # section A-A at 2:1 through the optical axis, looking from +X toward the tail
     ks = 2.0
@@ -158,7 +158,7 @@ def main():
         s._layers.append(_t(146, 246, "Isometric, from the front right and above", 2.2, 400, MUTED, "end"))
         s._layers.append(_t(146, 249.5, "(about 32 deg elevation); not to scale", 2.2, 400, MUTED, "end"))
     else:
-        s.add_svg(views["iso"], 30, 214, 180, 42, label="Isometric view", sublabel="From the front right and above; not to scale")
+        s.add_svg(views["iso"], 30, 220, 180, 36, label="Isometric view", sublabel="From the front right and above; not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
         f"Body {P['body_l']:.0f} x {P['body_w']:.0f} x {P['body_h']:.0f}, shell split at {P['z_split']:.0f}; {bb.size.Z:.0f} high with hood and shroud",
         f"Shroud {P['shroud_h']:.0f} deep, {P['shroud_rim_d']:.0f} dia at the rim; sets detector to item {D['d_pd_item']:.0f}",
