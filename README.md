@@ -2,13 +2,13 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386583570.svg)](https://zenodo.org/badge/latestdoi/1386583570) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/wastewise-scan/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/wastewise-scan)
 
-**Area:** Circular Materials · **TRL:** 3 of 9 (proof of concept on paper) · **Budget:** $150 USD volume target; prototype $164 in parts · **Difficulty:** 3 of 5
+**Area:** Circular Materials · **TRL:** 3 of 9 (proof of concept on paper) · **Budget:** USD 150 value-engineering target; constructable prototype USD 167.50 in parts · **Difficulty:** 3 of 5
 
 Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.
 
 ![WasteWise Scan: handheld near-infrared resin scanner, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/WSC-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
+[Exploded render](media/render-exploded.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/WSC-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -59,7 +59,7 @@ Press the soft shroud against an item and press the button. The scanner pulses e
 
 The scaffold named an AS7265x-class sensor, but that chip stops at 940 nm, short of the main polymer bands. The design uses discrete LEDs and an InGaAs photodiode instead, following the open Plastic Scanner project (decided by Amish, 2026-09-25).
 
-At TRL 3 the calculations (WSC-CAL-001 v0.2) show the design meets nine of fourteen requirements on paper, with none not met. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (R7), resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
+At TRL 3 the calculations (WSC-CAL-001 v0.3) show the constructable design meets seven of fourteen requirements on paper. The mass requirement (R6, 250 g) is not met since the parts needed to build it were added: about 254 g, 274 g with the cap. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (R7), resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -72,8 +72,15 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Printed rugged housing with black TPU light shroud
 - Black calibration cap with white PTFE reference, also used to back clear items in sun
 - Clip-on sun hood over the display
+- Printed display frame, cell strap and optical head block; foam gasket and M3 screws into brass inserts
 
-The priced bill of materials totals $164.00 ([bom/bom.csv](bom/bom.csv)): the $163 Amish accepted for the first prototype on 2026-09-25 plus the $1 sun hood. $150 remains the volume target.
+Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target), from the priced bill of materials ([bom/bom.csv](bom/bom.csv)).
+
+## Building the prototype
+
+The [prototype build plan](docs/05-build-plan.md) (WSC-BLD-001) shows how to make each of the 21 components and put them together in 13 steps, with a making sketch for every printed or cut part and a picture for every joint and step. Most parts are 3D printed in PETG and TPU; the rest are bought optics, electronics and fixings, joined with M3 screws into brass heat-set inserts. Drawing the plan made the concept physically buildable: the shells, optics, cell and display gained fixings, recorded in [WSC-DDR-004](docs/decisions/0004-design-for-construction.md) for Amish's review. It is a plan; nothing has been built yet.
+
+![WasteWise Scan prototype: every component pulled apart and numbered in build order](docs/05-build-plan/overview.png)
 
 ## Safety
 

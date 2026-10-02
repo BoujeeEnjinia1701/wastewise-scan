@@ -199,3 +199,57 @@ Appearance detail only; no fabrication detail, tolerances or TRL 4 work. `trl: 3
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-02: kit 1.7.0, constructable design and build plan
+
+Amish approved the build plan format on 2026-09-30 and asked for it in every repo, with outstanding decisions kept in a separate design decisions register. This session installed kit 1.7.0 and followed `/build-plan` and STANDARDS section 18 for WasteWise Scan. Nothing was built; `trl: 3` is unchanged.
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` now matches `.kit/CLAUDE.md`.
+- `cad/src/model.py` made constructable and given `python cad/src/model.py --check`: 312 constructability checks (no overlaps among 25 components, 25 required contacts, 11 clearances), all passing. STEP and STL regenerated in `cad/step/` and `cad/stl/` (new: display frame and cell strap).
+- `docs/decisions/0004-design-for-construction.md` (WSC-DDR-004 v0.1, Draft): every change, made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review.
+- `docs/05-build-plan.md` (WSC-BLD-001 v0.1) with pictures from `cad/src/build_plan_media.py`: overview, 9 making sketches (`cad/drawings/WSC-DWG-101` to `109`), 8 joint close-ups, 13 step pictures and a wiring diagram in `docs/05-build-plan/`.
+- `docs/06-design-decisions.md` (WSC-DEC-001 v0.1): 7 open decisions, 8 items to confirm when parts are bought, value engineering, and the decisions made.
+- WSC-CAL-001 v0.3 and `docs/04-calcs/sizing.py` (masses from the new model, 25 g fixings allowance, new J4 cell strap check, K2 cost against the value-engineering target); WSC-REQ-001 v0.5; WSC-PRC-001 v0.5; `bom/bom.csv` (19 lines) and `bom/bom-notes.md`; WSC-DWG-001 Rev P4 (`cad/src/sheets.py`); concept media regenerated (`media/hero.png`, `concept-blueprint`, `cutaway.png`, `exploded.png` now with callouts 16 to 18, `flow.png`, `model.glb`, `viewer.html`).
+- `project.yaml`: `design_state: constructable`; WSC-DDR-004, the build plan, the register and `cad/src/build_plan_media.py` in `trl_evidence`. `README.md`: links line, budget line, "Building the prototype" section with the overview picture.
+
+### Design changes made for construction (WSC-DDR-004)
+
+1. Shells: four M3 screws from below into heat-set inserts; bosses that meet and stop the squeeze; 1.5 mm foam gasket squeezed to 0.6 mm (top shell rim raised 0.6 mm, body still 34 mm); 1.2 mm locating tongue.
+2. Window: pinched between the shroud flange lip and the baffle tube (it had no seat).
+3. Shroud: 47 mm flange with three M3 screws into the head block (it had no fixing); now a replaceable wear part.
+4. Optical head block replaces the floating LED holder: stands on the floor, carries LEDs, photodiode and amplifier board (which also floated); three insert lugs, two board screws.
+5. Photodiode seat: a step and 4 mm aperture (the 5.6 mm baffle bore let the 5.4 mm can fall through); detector plane unchanged.
+6. Cell: cradle printed with the bottom shell for a 69 mm protected cell (was sized for 65 mm, with no contacts or retention); spring and flat contacts in the end walls; printed strap on two M3 screws (38 MPa, margin 1.3, [J4]); cell moved 6 mm toward the head.
+7. USB-C: power board on a printed seat (the socket overlapped the tail wall; noted 2026-09-26).
+8. Display board: printed frame with lips and four M3 screws (it had no fixing).
+9. Button hole 16.2 mm for a panel-mount 16 mm button with nut (was 13 mm; noted 2026-09-26).
+10. Slide power switch added to the model in the right-hand wall (it was only in the BOM).
+11. Sun hood: clip legs that snap under ribs on the top shell (it had nothing to clip to); width over the legs 68.4 mm.
+12. Calibration cap: 41.6 mm bore that grips the rim, 20 mm tall, 41 mm PTFE disc, so the rim rests on the disc (the cap was loose and the rim never touched the disc).
+
+### Key results and requirements
+
+- Mass 254 g, 274 g with the cap (was 209 g and 229 g). **R6 (250 g) is now not met**, 24 g over with the cap.
+- Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target; USD 3.50 added for construction).
+- Requirement status (WSC-CAL-001 v0.3): 1 not met (R6), 3 at risk (R1, R7, R13), 2 not verifiable at TRL 3 (R3, R10), 7 met; R12 reported against the value-engineering target. Optics, power, timing, sunlight and display results unchanged.
+
+### Proposed, awaiting Amish
+
+1. Accept the design-for-construction changes 1 to 12 (WSC-DDR-004, A2). Recommendation: accept.
+2. R6 mass (WSC-DDR-004, A1): (a) 2.0 mm shell walls, about 20 g lighter, drop case checked at TRL 4; (b) count R6 without the cap; (c) accept about 275 g. Recommendation: (a).
+3. Still open from earlier records: O1 partner and region, O2 who the USD 150 target is for, O3 extended InGaAs band, and the two WSC-DDR-002 field questions. All are in WSC-DEC-001.
+
+### Safety
+
+- New hazards in the build: a 230 °C iron for heat-set inserts; the build plan safety stops S1 to S6 cover the cell, first power, the LED on-time limit, first charge and scanning real waste.
+- Unchanged: resin only, never a safety judgment; protected 18650 cell; hardware limit on LED on-time.
+
+### Stale images (to regenerate on Amish's Mac)
+
+`media/render-hero.png`, `media/render-exploded.png`, `media/render-hero-plain.png` (none are in this cloud copy), `media/card.png` and `media/social-preview.png` show the concept: the hood has no clip legs, the shell sides no ribs, and the cap is the concept's 48 x 24 mm. `cad/src/product_model.py` should take the new hood, ribs and cap from `model.py`.
+
+### Recommended next step
+
+Amish reviews WSC-DDR-004 and the register, decides the R6 option, and the photoreal renders are regenerated. TRL 4 (building to this plan) stays on hold.

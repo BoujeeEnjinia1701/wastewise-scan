@@ -5,6 +5,7 @@ repo: BoujeeEnjinia1701/wastewise-scan         # GitHub repository, shown on eve
 area: Circular Materials
 trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
+design_state: constructable   # STANDARDS section 18; WSC-DDR-004
 trl_evidence:
   - docs/01-problem.md
   - docs/02-concept.md
@@ -12,6 +13,7 @@ trl_evidence:
   - docs/decisions/0001-trl2-review-decisions.md
   - docs/decisions/0002-scan-record-format.md
   - docs/decisions/0003-recommendations-accepted.md
+  - docs/decisions/0004-design-for-construction.md
   - docs/04-calcs/01-sizing.md
   - docs/04-calcs/sizing.py
   - cad/src/model.py
@@ -21,6 +23,9 @@ trl_evidence:
   - cad/drawings/WSC-DWG-001.svg
   - cad/drawings/WSC-DWG-001.pdf
   - bom/bom.csv
+  - docs/05-build-plan.md
+  - docs/06-design-decisions.md
+  - cad/src/build_plan_media.py
 shortlisted: false
 pitch: >-
   Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.

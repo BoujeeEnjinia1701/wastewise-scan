@@ -3,9 +3,9 @@ doc_id: WSC-CAL-001
 title: WasteWise Scan sizing calculations
 project: WasteWise Scan
 doc_type: Calculation
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,9 +17,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); decisions recorded in WSC-DDR-003 applied (sun hood, backing step and dark-level prompt, open-air crosstalk reading, modulation check)
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Constructable design (WSC-DDR-004); masses from the new model, fixings allowance, cell strap check J4, cost against the value-engineering target K2
 ---
 
 # WasteWise Scan sizing calculations
+
+**Revision 0.3 (2026-10-02).** The model was made constructable under Amish's instruction of 2026-09-30 (WSC-DDR-004): screws, bosses, a gasket, an optical head block, a cradle and strap, a display frame and clip legs on the hood were added. The optics, power, timing, sunlight and display results below are unchanged. The scanner now weighs about 254 g, 274 g with the cap [A3], so **R6 (250 g) is not met**, 24 g over; the options are in the design decisions register WSC-DEC-001. The cell strap carries the corner-drop load with a margin of 1.3 [J4]. The parts cost is USD 167.50 against the USD 150 value-engineering target, USD 17.50 over [K2]. The paragraph below describes revision 0.2.
 
 On paper, WasteWise Scan now meets nine of its fourteen requirements, has three at risk and none not met; two cannot be verified at TRL 3. This revision applies the decisions Amish accepted on 2026-09-25 (WSC-DDR-003). Sunlight (R4) moves from not met to met: clear and translucent items are backed with the black calibration cap, which cuts the ambient error to 0.36 % of signal, and a firmware rule refuses a result, rather than guessing, when the dark level shows light through an unbacked item. Display legibility (R7) moves from not met to at risk: a clip-on sun hood gives about 5.2:1 contrast where it shades the screen, but the screen still washes out with the sun near its normal or over the open side. Resin accuracy (R1) stays at risk because the 1,650 nm band reaches only the short edge of the 1,650 to 1,750 nm polymer region, and the shared record (R13) stays at risk until WasteWise-ml adopts it. The hood adds about 7 g and $1: mass rises from 202 g to 209 g and the prototype cost from $163.00 to $164.00. The calculations at v0.1 changed two parts of the TRL 2 concept: the transimpedance gain dropped from 1 MΩ to 47 kΩ and each band reading sits between two dark readings. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C4], is the line of that script's output that carries it.
 
@@ -46,11 +52,12 @@ The design case is the decided configuration (WSC-DDR-001 and WSC-DDR-003): eigh
 | Power | ESP32-S3 at 240 MHz with radio off 45 mA, display at full backlight 60 mA, analog front end 3 mA; LEDs 100 mA while on; 4 scans per minute; 80 % of 10.8 Wh usable | Typical values; to measure on the board |
 | Display | 400 cd/m² white, 0.4 cd/m² black, 2 % diffuse-equivalent screen reflectance; about 3:1 contrast needed for large colored icons | Not from a datasheet; legibility threshold assumed |
 | Drop | 1.2 m; 1 mm crush on a shell corner, 10 mm on the TPU shroud | First-order stopping distances |
+| Construction (v0.3) | Printed parts solid at the model volume; fixings, gasket and wire 25 g (17 steel screws, 15 brass inserts); cell contacts 2 g; printed PETG bending strength 50 MPa along the layers | Catalog masses; conservative strength for printed PETG |
 | Decided options | Black cap leaves 10⁻³ of the through-light when backing a clear item; ambient error limit 0.5 % of signal; window crosstalk changes by 10 % between open-air readings; modulation check at 2 kHz | Assumed; cap opacity and crosstalk stability to measure at TRL 4 |
 
 ## A. Geometry and mass (R6)
 
-The scanner weighs about 209 g, and 229 g with the calibration cap [A3], against 250 g. The printed shells are the largest share (48 g and 47 g from the model volumes in PETG), followed by the cell (47 g), the display board (15 g) and the sun hood (7 g) [A2]. The TRL 2 estimate of about 170 g undercounted the shells. The body is 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in); the 18 mm shroud below (rim 42 mm outside and 36 mm inside) and the 20 mm hood above make it 72 mm high overall [A1]. R6 is met; its text now names the hood alongside the shroud as an attachment outside the body envelope (WSC-REQ-001 v0.4).
+The constructable design weighs about 254 g, and 274 g with the calibration cap [A3], against 250 g. The printed shells are the largest share (51 g and 56 g from the model volumes in PETG, now including the bosses, the cradle and the tongue), followed by the cell (47 g), the fixings, gasket and wire (25 g), the display board (15 g), the sun hood with its clip legs (11 g) and the display frame and cell strap (11 g) [A2]. At v0.2 the scanner was 209 g (229 g with the cap); the parts added for construction and a realistic allowance for 17 screws and 15 inserts (25 g in place of 10 g) account for the rise. The body is 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in); the 18 mm shroud below (rim 42 mm outside and 36 mm inside) and the 20 mm hood above make it 72 mm high overall, and the hood legs make it 68 mm wide [A1]. R6 is **not met**: 24 g over with the cap, 4 g over without it. Thinner shell walls (2.0 mm, about 20 g lighter) are the recommended fix, proposed in WSC-DDR-004 (A1).
 
 ## B. Band coverage and detector response (R1)
 
@@ -101,20 +108,21 @@ In 100 klx sun, the screen reflects about 637 cd/m² over a 400 cd/m² image, gi
 
 ## J. Drop and temperature (R10, R11)
 
-A 1.2 m drop delivers about 2.4 J. On a shell corner with about 1 mm of crush, deceleration is about 1,200 g; landing on the TPU shroud, about 120 g [J1]. The cell cradle must then hold the cell against about 550 N and the display board against about 180 N [J2]. IP54 and the 0 to 45 °C range depend on the gasket and the cell, so R10 is **not verifiable at TRL 3**.
+A 1.2 m drop delivers about 3.0 J. On a shell corner with about 1 mm of crush, deceleration is about 1,200 g; landing on the TPU shroud, about 120 g [J1]. The cell cradle must then hold the cell against about 550 N and the display board against about 180 N [J2]. In the constructable design the cell is held down by a printed PETG strap 10 mm wide and 8 mm deep over a 29 mm span: with the whole 553 N at mid-span its bending stress is about 38 MPa against about 50 MPa for printed PETG along the layers, a margin of 1.3, and each of its two M3 inserts carries about 277 N, well inside the pull-out strength of a brass insert in PETG [J4]. The margin is thin because the drop load is a first-order estimate; the strap is printed with its layers along the bar for that reason. IP54 and the 0 to 45 °C range depend on the gasket and the cell, so R10 is **not verifiable at TRL 3**.
 
 LED output drifts about 0.4 %/°C, so the 5 % drift warning in R11 trips after about 12.5 °C of change since the last white reference [J3]. A morning calibration at 25 °C will need repeating by a hot midday. The cap makes this a 10 s step, so R11 is met by design.
 
 ## K. Cost (R12)
 
-The priced BOM has 16 lines and totals $164.00, 9.3 % over the $150 volume target in `budget_usd`; the LEDs and photodiode are $92.00, or 56 % [K1]. Amish accepted about $163 for the first prototype on 2026-09-25 (WSC-DDR-001, D2) and then the sun hood (WSC-DDR-003 D10), which adds $1.00 of PETG, so R12 as restated in WSC-REQ-001 v0.4 (about $164 for the prototype) is met. The $150 volume target cannot be shown without volume quotes.
+Value-engineering target: USD 150 (`budget_usd`, a hypothetical control target, not a limit; Amish, 2026-10-01). Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target) [K2]. The priced BOM has 19 lines; the LEDs and photodiode are USD 92.00, or 55 % [K1]. Making the design constructable added USD 3.50 net (display frame, cell strap, gasket and more fixings; the bought cell holder became contacts in a printed cradle). The cost drivers and the savings worth trying are in the design decisions register WSC-DEC-001.
 
 ## Results
 
-*Table 2. Requirement status at TRL 3, weakest first [L1, L2]. None is not met.*
+*Table 2. Requirement status at TRL 3, weakest first [L1, L2]. One is not met (R6); R12 is reported against the value-engineering target.*
 
 | ID | Requirement | Value | Target | Status |
 | --- | --- | --- | --- | --- |
+| R6 | One-handed and light | 254 g (274 g with cap); 160 x 62 x 34 mm | 250 g; 170 x 65 x 40 mm plus shroud and hood | **Not met** (was met) |
 | R1 | Identify common resins | 8 bands; 1,650 nm band centroid 1,628 nm, 31 % of its signal at or above 1,650 nm | 95 % correct on 5 resins | At risk |
 | R7 | Readable by anyone | 5.2:1 where the hood shades the screen; 1.6:1 with the sun near the screen normal or over the open side | Legible in direct sun (about 3:1) | At risk (was not met) |
 | R13 | Work with WasteWise-ml | Record decided on this side (WSC-DDR-002 v0.2); not yet adopted by WasteWise-ml | Shared documented format | At risk |
@@ -123,14 +131,13 @@ The priced BOM has 16 lines and totals $164.00, 9.3 % over the $150 volume targe
 | R2 | Fast result | 0.33 s | 1.5 s or less | Met |
 | R4 | Work in sunlight | Opaque 0.13 %, backed clear 0.36 % of signal; unbacked clear items in sun refused by the dark-level prompt | Same result in 100 klx sun; clear items backed with the cap | Met (estimate; was not met) |
 | R5 | Last a shift | 22.1 h | 8 h or more | Met |
-| R6 | One-handed and light | 209 g (229 g with cap); 160 x 62 x 34 mm | 250 g; 170 x 65 x 40 mm plus shroud and hood | Met |
 | R8 | Local price grade | Price table on the device, offline | Editable local grades | Met (by design) |
 | R9 | Log scans | About 131,000 scans | 10,000 scans | Met |
 | R11 | Stay calibrated | Cap reference and open-air reading; 5 % drift after about 12.5 °C | Check in 10 s; warn at 5 % | Met (by design) |
-| R12 | Low cost | $164.00 prototype | About $164 prototype (accepted); $150 volume target | Met (prototype) |
+| R12 | Low cost | USD 167.50 prototype | USD 150 value-engineering target | USD 17.50 over the target |
 | R14 | Eye-safe illumination | 3.9 W/m² at 200 mm; 3.8 % of the retinal limit | IEC 62471 exempt | Met (estimate) |
 
-Summary: none not met, 3 at risk (R1, R7, R13), 2 not verifiable at TRL 3 (R3, R10), 9 met.
+Summary: 1 not met (R6), 3 at risk (R1, R7, R13), 2 not verifiable at TRL 3 (R3, R10), 7 met; R12 USD 17.50 over the value-engineering target.
 
 ## Checks against earlier documents
 
@@ -140,3 +147,5 @@ Summary: none not met, 3 at risk (R1, R7, R13), 2 not verifiable at TRL 3 (R3, R
 - Photocurrent: the TRL 2 range of 0.1 to 1 µA is confirmed for most bands; the brightest reaches about 2.5 µA.
 - Cost: $163.00 at v0.1; $164.00 at v0.2 with the sun hood.
 - Mass: 202 g at v0.1; 209 g at v0.2 with the sun hood.
+- Cost: USD 167.50 at v0.3 with the parts added for construction (WSC-DDR-004).
+- Mass: 254 g at v0.3 (274 g with the cap), with the parts added for construction and a 25 g fixings allowance.

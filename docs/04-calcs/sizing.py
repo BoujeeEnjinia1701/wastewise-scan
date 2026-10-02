@@ -66,7 +66,9 @@ A = {
     # masses
     "rho_petg": 1.27, "rho_tpu": 1.21, "rho_glass": 2.23, "rho_ptfe": 2.20,   # g/cm3
     "m_cell": 47.0, "m_board": 15.0, "m_leds": 4.0, "m_pd": 0.5, "m_afe": 5.0,
-    "m_button": 5.0, "m_usb": 2.0, "m_fixings": 10.0,
+    "m_button": 5.0, "m_usb": 2.0, "m_fixings": 25.0, "m_contacts": 2.0,   # fixings: 17 steel screws, 15 brass heat-set inserts, washers, nuts, gasket, wire (WSC-DDR-004)
+    # cell strap (WSC-DDR-004): PETG bending strength and the span between its two screws
+    "petg_strength": 50.0,      # MPa, printed PETG, flexural, along the layers (conservative)
     # display legibility
     "disp_nits": 400.0, "disp_black_nits": 0.4, "screen_rho": 0.02,   # diffuse-equivalent screen reflectance
     "sun_angles": (30, 45, 60, 75),   # deg, sun direction from the screen normal, for the hood check
@@ -117,8 +119,9 @@ m = {
     "Top shell (PETG)": vol["top_shell"] * A["rho_petg"],
     "Bottom shell (PETG)": vol["bottom_shell"] * A["rho_petg"],
     "Shroud (TPU)": vol["shroud"] * A["rho_tpu"],
-    "LED holder (PETG)": vol["led_holder"] * A["rho_petg"],
-    "Cell cradle (PETG) and USB-C": vol["cell_holder_usb"] * A["rho_petg"] + A["m_usb"],
+    "Optical head block (PETG)": vol["led_holder"] * A["rho_petg"],
+    "Display frame and cell strap (PETG)": (vol["display_frame"] + vol["cell_strap"]) * A["rho_petg"],
+    "Cell contacts and USB-C board": A["m_contacts"] + A["m_usb"],
     "Window (borosilicate)": vol["window"] * A["rho_glass"],
     "18650 cell": A["m_cell"],
     "Display board": A["m_board"],
@@ -328,6 +331,13 @@ m_tot = (m_scanner) / 1000
 say("J1", f"Drop {A['drop_h']} m: impact {m_tot * g * A['drop_h']:.1f} J; about {decel_shell:.0f} g on a shell corner "
           f"({A['stop_shell_m'] * 1e3:.0f} mm crush), about {decel_tpu:.0f} g on the shroud ({A['stop_tpu_m'] * 1e3:.0f} mm)")
 say("J2", f"Cell retention needed on a corner drop {A['m_cell'] / 1000 * g * decel_shell:.0f} N; display board {A['m_board'] / 1000 * g * decel_shell:.0f} N")
+F_cell = A["m_cell"] / 1000 * g * decel_shell
+span = 2 * D["strap_y"]
+Zs = P["strap_w"] * P["strap_t"] ** 2 / 6
+sig = F_cell * span / 4 / Zs
+say("J4", f"Cell strap {P['strap_w']:.0f} x {P['strap_t']:.0f} mm PETG over a {span:.0f} mm span, cell load {F_cell:.0f} N at mid-span: "
+          f"bending stress {sig:.0f} MPa against about {A['petg_strength']:.0f} MPa ({A['petg_strength'] / sig:.1f} times); "
+          f"each M3 heat-set insert carries {F_cell / 2:.0f} N")
 dT = A["drift_limit"] / abs(A["led_tc"])
 say("J3", f"LED output drifts {abs(A['led_tc']) * 100:.1f} %/°C: the 5 % drift warning trips after about {dT:.1f} °C change since the last white reference")
 STATUS["R10"] = ("Not verifiable at TRL 3", f"corner drop about {decel_shell:.0f} g; cell needs {A['m_cell'] / 1000 * g * decel_shell:.0f} N retention", "1.2 m drop, IP54, 0 to 45 °C")
@@ -340,15 +350,19 @@ rows = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
 total = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows)
 budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"])
 optics = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows if r["item"].startswith(("3 ", "4 ")))
-say("K1", f"BOM {len(rows)} lines, total ${total:.2f}; budget_usd ${budget:.0f} (volume target); "
+say("K1", f"BOM {len(rows)} lines, total ${total:.2f}; value-engineering target ${budget:.0f}; "
           f"{(total / budget - 1) * 100:+.1f} %; LEDs and photodiode ${optics:.2f} ({optics / total * 100:.0f} %)")
-STATUS["R12"] = ("Met" if total <= PROTO_ACCEPTED else "Not met", f"${total:.2f} prototype", "about $164 prototype (accepted plus hood); $150 volume target")
+say("K2", f"Value-engineering target USD {budget:.0f}; estimated cost of the constructable design USD {total:.2f} "
+          f"(USD {abs(total - budget):.2f} {'over' if total > budget else 'under'} the target; "
+          f"USD {total - PROTO_ACCEPTED:+.2f} against the USD {PROTO_ACCEPTED:.0f} prototype figure accepted on 2026-09-25)")
+STATUS["R12"] = (f"{'Over' if total > budget else 'Under'} VE target", f"USD {total:.2f} prototype, USD {abs(total - budget):.2f} {'over' if total > budget else 'under'} the USD {budget:.0f} value-engineering target",
+                 "USD 150 value-engineering target (hypothetical control target, not a limit)")
 
 # ------------------------------------------------------------------ L. requirement table
 print("L. Requirement status")
 STATUS["R8"] = ("Met", "price table on the device, offline", "editable local grades")
 STATUS["R13"] = ("At risk", "shared record decided on this side (WSC-DDR-002 v0.2); not yet adopted by WasteWise-ml", "shared documented format")
-order = ["Not met", "At risk", "Not verifiable at TRL 3", "Met"]
+order = ["Not met", "At risk", "Not verifiable at TRL 3", "Met", "Over VE target", "Under VE target"]
 for rid in sorted(STATUS, key=lambda k: int(k[1:])):
     s, v, t = STATUS[rid]
     say("L1", f"  {rid:4s} {s:24s} value: {v}; target: {t}")

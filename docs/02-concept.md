@@ -3,9 +3,9 @@ doc_id: WSC-PRC-001
 title: WasteWise Scan design precis
 project: WasteWise Scan
 doc_type: Design precis
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); WSC-DDR-003 applied (black cap as backing, dark-level prompt, sun hood, open-air crosstalk reading, shared record); numbers from WSC-CAL-001 v0.2
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Constructable design (WSC-DDR-004) and build plan WSC-BLD-001; components, mass and cost from WSC-CAL-001 v0.3; budget as a value-engineering target
 ---
 
 # WasteWise Scan design precis
 
-WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.33 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.2 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. The prototype costs $164.00 in parts against the accepted figure of about $164; $150 remains the volume target.
+WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.33 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.2 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). Since 2026-10-02 the design is constructable (WSC-DDR-004, open for Amish's review): screws, a gasket, an optical head block, a cell cradle and strap, a display frame and clip legs on the hood were added, and the scanner now weighs about 254 g (274 g with the cap), so the 250 g mass requirement (R6) is not met. The prototype build plan is WSC-BLD-001 ([05-build-plan.md](05-build-plan.md)).
 
 ![Hero render](../media/hero.png)
 
@@ -58,19 +62,22 @@ Table 1. Main components. Numbers match the BOM, the exploded view and drawing W
 
 | # | Component | Choice | Notes |
 | --- | --- | --- | --- |
-| 1 | Top shell | 3D-printed PETG with display window and button hole | Sealed with a gasket to the bottom shell; about 48 g |
+| 1 | Top shell | 3D-printed PETG with display window, button hole and eight insert bosses | Four M3 screws from below; foam gasket on the rim; about 51 g |
 | 2 | Controller and display | ESP32-S3 board with 1.9 in IPS display and on-board Li-ion charger (LilyGO T-Display-S3 class) | No custom PCB (WSC-DDR-001 D3) |
-| 3 | LED ring | Eight LEDs on a 20 mm pitch circle in a printed holder, each tilted about 23° so the beams meet on the item | SWIR LEDs dominate cost |
+| 3 | LED ring | Eight LEDs on a 20 mm pitch circle in a printed optical head block, each tilted about 23° so the beams meet on the item | SWIR LEDs dominate cost; the block also seats the photodiode and carries item 5 |
 | 4 | Photodiode | InGaAs PIN photodiode, 1 mm, TO-46, about 900 to 1,700 nm, inside a short baffle tube | Standard InGaAs, cutoff near 1,700 nm |
 | 5 | Amplifier and ADC | Low-noise op-amp transimpedance stage with 47 kΩ feedback, 24-bit ADC (ADS1220 class), LED switches | On perfboard for the first build |
 | 6 | Window | Borosilicate glass disc, 25 mm, 2 mm | Keeps dust out; uncoated |
-| 7 | Light shroud | Black TPU cone, 18 mm deep, 42 mm across the rim, 36 mm inside | Blocks direct light, sets distance |
+| 7 | Light shroud | Black TPU cone, 18 mm deep, 42 mm across the rim, 36 mm inside, with a 47 mm clamping flange | Blocks direct light, sets distance; its three screws clamp the window and head block |
 | 8 | Battery | One protected 18650 Li-ion cell, 3,000 mAh | WSC-DDR-001 D7 |
-| 9 | Cell holder and USB-C | Printed cradle, protection wiring to the board charger, USB-C socket in the tail wall | Must hold the cell against about 550 N on a corner drop |
-| 10 | Bottom shell and grip | 3D-printed PETG, textured grip, window seat | About 47 g |
+| 9 | Cell contacts and USB-C | Spring and flat contacts in a cradle printed with the bottom shell; USB-C power board in the tail wall | A printed strap (item 18) holds the cell against about 550 N on a corner drop |
+| 10 | Bottom shell and grip | 3D-printed PETG, textured grip, window hole, cell cradle, screw bosses | About 56 g |
 | 11 | Scan button | Large sealed 16 mm push button for gloved hands | |
 | 12, 13 | Calibration cap | Printed black PETG cap, 48 mm OD, with a 38 mm white PTFE reference disc; stores over the shroud | White reference (WSC-DDR-001 D6); also the backing for clear items in sun (WSC-DDR-003 D9) |
-| 14 | Sun hood | Clip-on printed PETG hood, walls 20 mm high on both sides and at the head end of the display window, open toward the user | About 7 g and $1 (WSC-DDR-003 D10) |
+| 14 | Sun hood | Clip-on printed PETG hood, walls 20 mm high on both sides and at the head end of the display window, open toward the user; legs snap under ribs on the top shell | About 11 g and $1 (WSC-DDR-003 D10, WSC-DDR-004) |
+| 17 | Display frame | Printed PETG frame holding the display board under the window | Four M3 screws into the top shell |
+| 18 | Cell strap | Printed PETG bridge across the cell | Two M3 screws into floor bosses [J4] |
+| 19 | Shell gasket | Closed-cell foam tape on the bottom shell rim | Squeezed to 0.6 mm; the bosses set the squeeze |
 
 ![Exploded view](../media/exploded.png)
 
@@ -92,11 +99,11 @@ Table 2. Key numbers.
 | Average power | about 0.39 W [F2] | |
 | Battery life | about 22 h [F2] | R5 (8 h) met |
 | Log capacity | about 131,000 scans at 64 B [G1] | R9 met |
-| Mass | about 209 g, 229 g with cap [A3] | R6 (250 g) met |
-| Size | 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in), 72 mm high with shroud and sun hood [A1] | R6 met |
+| Mass | about 254 g, 274 g with cap [A3] | **R6 (250 g) not met** |
+| Size | 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in), 72 mm high with shroud and sun hood, 68 mm wide over the hood legs [A1] | R6 size met |
 | Display contrast in 100 klx sun | about 1.6:1 unshaded; 5.2:1 where the hood shades the screen [I1, I3, I4] | **R7 at risk** |
 | LED irradiance at 200 mm | 3.9 W/m² against 100 W/m² [H2] | R14 met by estimate |
-| Parts cost | $164.00 [K1] | R12 met for the prototype; $150 volume target |
+| Parts cost | USD 167.50 [K2] | USD 17.50 over the USD 150 value-engineering target |
 
 ## Key design choices
 
