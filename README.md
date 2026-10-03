@@ -59,7 +59,7 @@ Press the soft shroud against an item and press the button. The scanner pulses e
 
 The scaffold named an AS7265x-class sensor, but that chip stops at 940 nm, short of the main polymer bands. The design uses discrete LEDs and an InGaAs photodiode instead, following the open Plastic Scanner project (decided by Amish, 2026-09-25).
 
-At TRL 3 the calculations (WSC-CAL-001 v0.3) show the constructable design meets seven of fourteen requirements on paper. The mass requirement (R6, 250 g) is not met since the parts needed to build it were added: about 254 g, 274 g with the cap. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (R7), resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
+At TRL 3 the calculations (WSC-CAL-001 v0.4) show the constructable design meets seven of fourteen requirements on paper. The mass requirement (R6, 250 g) is not met since the parts needed to build it were added: about 238 g, 258 g with the cap (8 g over) after the 2.0 mm shell walls decided on 2026-10-02. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (R7), resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 

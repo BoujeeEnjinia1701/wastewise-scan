@@ -248,8 +248,88 @@ Amish approved the build plan format on 2026-09-30 and asked for it in every rep
 
 ### Stale images (to regenerate on Amish's Mac)
 
-`media/render-hero.png`, `media/render-exploded.png`, `media/render-hero-plain.png` (none are in this cloud copy), `media/card.png` and `media/social-preview.png` show the concept: the hood has no clip legs, the shell sides no ribs, and the cap is the concept's 48 x 24 mm. `cad/src/product_model.py` should take the new hood, ribs and cap from `model.py`.
+`media/render-hero.png`, `media/render-exploded.png`, `media/render-hero-plain.png` (none are in this cloud copy), `media/card.png` and `media/social-preview.png` are to be made again on Amish's Mac from the render scenes exported on 2026-10-02 (see "Approved follow-ups carried out" below); `cad/src/product_model.py` now takes the hood, ribs, cap and shell walls from `model.py`.
 
 ### Recommended next step
 
 Amish reviews WSC-DDR-004 and the register, decides the R6 option, and the photoreal renders are regenerated. TRL 4 (building to this plan) stays on hold.
+
+## Session 2026-10-02: open decisions decided
+
+Amish, 2026-10-02: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." This approves the recommendation written for each open decision in the design decisions register (WSC-DEC-001), as he did for the other 555 open decisions ("i approve your recommendations for all 555 open decisions."). trl stays 3; no build or test work was done, and the model, BOM quantities and prices, and pictures are unchanged.
+
+### Decisions recorded
+
+Seven decisions, all moved to Decisions made in WSC-DEC-001, dated 2026-10-02:
+
+1. Design for construction accepted: the changes P1 to P12 of WSC-DDR-004, as made.
+2. Mass (R6): 2.0 mm shell walls, keeping the bosses and ribs, with the drop case checked at TRL 4; R6 stays not met (about 254 g with the cap, 4 g over) until the first prototype is weighed, and the cap stays counted because it is carried for backing clear items.
+3. First partner and region: a member-owned waste picker cooperative that already sells sorted plastics to scrap buyers; the first candidate to approach is SWaCH in Pune, India, the partner chosen for WasteWise-ml, with Pune scrap prices as the first price table.
+4. Value-engineering target: the USD 150 value-engineering target is the price a cooperative pays for a shared scanner, not an individual picker.
+5. Extended InGaAs band: eight bands for the prototype; the paper band study on published reference spectra comes first, and the extended InGaAs band is added only if that study shows PE and PP cannot be told apart to R1 with eight.
+6. Pair ID in the field: the scanner creates the pair ID and shows it as a QR code on its screen for the phone to scan, with the same short code in digits as a typed fallback.
+7. Consented spectra: consented spectra join the WasteWise-ml field dataset on the same terms as field photos: opt-in per scan, co-owned by the pickers' organization, and published under CC BY 4.0 only with that organization's agreement.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (WSC-DEC-001 v0.2): open decisions moved to Decisions made.
+- `docs/decisions/0004-design-for-construction.md` (WSC-DDR-004 v0.2): acceptance recorded in the status line; A1 and A2 decided (record stays Draft).
+- `docs/decisions/0001-trl2-review-decisions.md` (WSC-DDR-001 v0.3): O1 to O3 recorded as decided.
+- `docs/decisions/0002-scan-record-format.md` (WSC-DDR-002 v0.3): field questions 2 and 3 recorded as decided.
+- `docs/decisions/0003-recommendations-accepted.md` (WSC-DDR-003 v0.2): open items recorded as decided.
+- `docs/01-problem.md` (WSC-PRB-001 v0.4): partner, region and price-target questions answered.
+- `docs/02-concept.md` (WSC-PRC-001 v0.6): open questions and the PE versus PP note answered.
+- `docs/03-requirements.md` (WSC-REQ-001 v0.6): R6 and R13 notes record the decisions; no status changed.
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 2 (model): Set both shell walls to 2.0 mm in the model, keeping the bosses, ribs and tongue, rerun the constructability checks and regenerate STEP and STL.
+2. Decision 2 (drawings): Revise WSC-DWG-001 and the making sketches of both shells for the 2.0 mm walls.
+3. Decision 2 (calculations): Recompute the shell masses and R6 in WSC-CAL-001 (expected about 234 g, 254 g with the cap) and note the drop case R10 for TRL 4.
+4. Decision 2 (pictures): Regenerate the build plan pictures of the shells if the wall change is visible.
+5. Decision 5 (calculations): Run the paper band study on published PE and PP reference spectra and report whether eight bands meet R1.
+6. Decision 6 (docs): Add the QR pair ID screen and its digit fallback to the firmware sketch notes and the WSC-DDR-002 record fields.
+7. Decisions 3, 4 and 7 (docs): Approach SWaCH in Pune, jointly with WasteWise-ml, for the price table, the cooperative price and the consent terms for spectra.
+
+### Points found in the review
+
+- Option (a) for R6 saves about 20 g, which leaves the scanner at about 254 g with the cap, still 4 g over 250 g; the register's recommendation implied (a) would meet R6 but it does not on its own.
+- WSC-DDR-004's status line says 'proposed' while the record is Draft; the acceptance should be recorded with the record kept Draft.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish approved on 2026-10-02 that every follow-up action from the open-decision sign-off be carried out. `trl: 3` is unchanged; no build or test work was done.
+
+### Follow-ups
+
+1. Done. Decision 2, model: both shell walls 2.0 mm in `cad/src/model.py`; bosses, ribs, tongue kept; two new checks (wall at least 1.6 mm, tongue fits inside it), 314 constructability checks, 0 failed; STEP and STL regenerated in `cad/step/` and `cad/stl/`.
+2. Done. Decision 2, drawings: WSC-DWG-001 Rev P5 (revision row, mass 238 g and 258 g with the cap, section callouts moved clear of the longer revision table); making sketches WSC-DWG-101 to 109 regenerated (101 and 102 name 2.0 mm walls and five perimeters; 105 shows the 12 mm frame).
+3. Done. Decision 2, calculations: WSC-CAL-001 v0.4 and `sizing.py`. Shell masses 42 g and 47 g (were 51 g and 56 g); scanner 238 g, 258 g with the cap. R6 stays **not met**, 8 g over, not the 4 g the decision expected: the shells saved 17 g, not about 20 g, and the head block, frame and strap gained about 1 g. Drop energy 2.8 J; the cell load (about 550 N) is unchanged, and the thinner shell corners are noted for the drop test at TRL 4 (R10, not verifiable at TRL 3).
+4. Done. Decision 2, pictures: overview, 8 joint pictures and 13 step pictures regenerated from the model; concept media regenerated (`media/hero.png`, concept blueprint, cutaway, exploded, flow, `model.glb`, `viewer.html`).
+5. Done. Decision 5, band study: `sizing.py` B4 to B7 and WSC-CAL-001 section B. Reference spectra are built from published near-infrared band positions with approximate depths (not digitized spectra), so this is an indication only. Eight bands: 89.5 % correct on five resins, PE against PP 93 %; without the 1,650 nm band 72 %; six bands 88 %. At 1.0 % band scatter eight bands reach 96.7 %. Result: eight bands do not meet 95 % at the assumed scatter, and the study cannot show they never will. The decision adds the extended InGaAs band only if the study shows PE and PP cannot be told apart, which is not shown either way, so it is **not added**.
+6. Done. Decision 6, docs: WSC-DDR-002 v0.4 has the QR pair ID screen and its digit fallback (nine digits, QR text, screen size check, `pair_via` field). The repo has no firmware sketch (TRL cap), so the firmware notes live in that record.
+7. Not done: decisions 3, 4 and 7, approach SWaCH in Pune with WasteWise-ml for the price table, cooperative price and consent terms; this is outreach by Amish.
+
+### Other changes
+
+- BOM: lines 1 and 10 respecified (2.0 mm walls, about 33 cm3 and 37 cm3, about 42 g and 47 g); prices unchanged at USD 3.00 and USD 5.00 because filament (about USD 1 a shell at about USD 25 per kg) is a small part of each line. Total USD 167.50.
+- Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). `budget_usd` unchanged.
+- Requirement status changes: none (R6 still not met at 258 g with the cap; R1 still at risk).
+- Appearance model (`cad/src/product_model.py`): it already took walls from `model.py`; added the missing `TITLE` and `RENDER_VIEWS` (hero, exploded, detail), the hood clip ribs, and a clay hand for scale in the hero view. Render scenes exported to `/home/claude/renders/wastewise-scan` (hero, exploded, detail, with `wastewise-scan__jobs.json`). Photoreal renders, `media/card.png` and `media/social-preview.png` are for Amish's Mac.
+
+### Proposed, awaiting Amish
+
+- Extended InGaAs band now or after the first labeled item set (WSC-DEC-001, open decision 1). Recommendation: after the item set.
+- R6 remains 8 g over. Options if it matters before the prototype is weighed: count R6 without the cap (238 g) or thin the display frame and head block; neither is done.
+
+### Cross-repo actions
+
+- WasteWise-ml: adopt the QR pair ID (nine digits, `WWS1-<digits>-<device_id>` text, `pair_via` field) and the consented spectra terms in WSC-DDR-002; WasteWise-ml and SWaCH outreach is Amish's.
+
+### Documents changed
+
+WSC-CAL-001 v0.4, WSC-REQ-001 v0.7, WSC-PRC-001 v0.7, WSC-DDR-001 v0.4, WSC-DDR-002 v0.4, WSC-DDR-004 v0.3, WSC-DEC-001 v0.3, WSC-BLD-001 v0.2, README, `bom/bom.csv`, `bom/bom-notes.md`, WSC-DWG-001 Rev P5.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

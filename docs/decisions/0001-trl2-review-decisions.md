@@ -3,9 +3,9 @@ doc_id: WSC-DDR-001
 title: WasteWise Scan TRL 2 review decisions
 project: WasteWise Scan
 doc_type: Design decision record
-version: "0.2"
+version: "0.4"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,20 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); O4 decided, see WSC-DDR-003 D12
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O1 to O3 recorded as decided by Amish on 2026-10-02
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O3 band study run on paper (WSC-CAL-001 v0.4); result recorded
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items D1 to D7 and, since v0.2, O4 (WSC-DDR-003 D12); items O1 to O3 remain proposed
+- **Status:** accepted for items D1 to D7 and, since v0.2, O4 (WSC-DDR-003 D12); items O1 to O3 decided by Amish on 2026-10-02 (WSC-DEC-001)
 
 ## Context
 
@@ -48,13 +56,13 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 | D6 | Calibration | A white PTFE reference disc in the storage cap. Decided by Amish, 2026-09-25: go with recommendation. |
 | D7 | Battery | One protected 18650 Li-ion cell rather than a flat LiPo pouch. Decided by Amish, 2026-09-25: go with recommendation. |
 
-*Table 2. Items left open at v0.1. O1 to O3 carry no recommendation and remain open; O4 had a recommendation and is now decided.*
+*Table 2. Items left open at v0.1. O4 had a recommendation and was decided on 2026-09-25; O1 to O3 were decided by Amish on 2026-10-02 (WSC-DEC-001).*
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First partner and region for co-design and the first price table (REVIEW item 8; PRB open questions 1 and 2) | Proposed, awaiting Amish. Per the portfolio decision, partners are picked per area later. |
-| O2 | Whether the $150 target is the price a cooperative would pay or should be lower for individual pickers (PRB open question 3) | Proposed, awaiting Amish. D2 fixes $150 as the volume target but not who pays it. |
-| O3 | Whether to add a 1,700 to 1,750 nm band on an extended InGaAs detector to separate PE from PP (PRC open question 2) | Proposed, awaiting Amish. WSC-CAL-001 section B shows the 1,650 nm band reaches only the short edge of that region. |
+| O1 | First partner and region for co-design and the first price table (REVIEW item 8; PRB open questions 1 and 2) | Decided by Amish, 2026-10-02: a member-owned waste picker cooperative that already sells sorted plastics to scrap buyers; the first candidate to approach is SWaCH in Pune, India, the partner chosen for WasteWise-ml, with Pune scrap prices as the first price table. |
+| O2 | Whether the $150 target is the price a cooperative would pay or should be lower for individual pickers (PRB open question 3) | Decided by Amish, 2026-10-02: the USD 150 value-engineering target is the price a cooperative pays for a shared scanner, not an individual picker. |
+| O3 | Whether to add a 1,700 to 1,750 nm band on an extended InGaAs detector to separate PE from PP (PRC open question 2) | Decided by Amish, 2026-10-02: eight bands for the prototype; the paper band study on published reference spectra comes first, and the extended InGaAs band is added only if that study shows PE and PP cannot be told apart to R1 with eight. WSC-CAL-001 section B shows the 1,650 nm band reaches only the short edge of that region. Paper band study done 2026-10-02 (WSC-CAL-001 v0.4, B4 to B7): 89.5 % correct with eight bands and 93 % for PE against PP at the assumed item scatter, above 98 % at 1.0 % scatter. It neither shows nor rules out the problem, so the extended band is not added and is proposed to Amish (WSC-DEC-001). |
 | O4 | Scan record format shared with WasteWise-ml and ReflowEconomy (PRC open question 5) | Decided by Amish, 2026-09-25: go with recommendation. One shared record with a `pair_id` join (WSC-DDR-002 option 1); recorded in WSC-DDR-003 D12. Adoption by WasteWise-ml is a cross-repo action. |
 
 ## Consequences

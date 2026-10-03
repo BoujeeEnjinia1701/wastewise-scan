@@ -3,9 +3,9 @@ doc_id: WSC-DDR-003
 title: WasteWise Scan recommendations accepted
 project: WasteWise Scan
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); record every newly decided item, what changed, and what remains open
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Open items recorded as decided by Amish on 2026-10-02 (WSC-DEC-001)
 ---
 
 # 0003: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items D8 to D12; items O1 to O3 and the two field questions of WSC-DDR-002 remain proposed
+- **Status:** accepted for items D8 to D12; items O1 to O3 and the two field questions of WSC-DDR-002 decided by Amish on 2026-10-02 (WSC-DEC-001)
 
 This is the portfolio's "recommendations accepted" record (DDR-002 in most repos). In WasteWise Scan the number 0002 was already used by the shared scan record, WSC-DDR-002, so this record is WSC-DDR-003.
 
@@ -46,15 +50,15 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 
 No budget change: `budget_usd` stays $150 as the volume target (WSC-DDR-001 D2). The prototype figure moves from about $163 to about $164 because of the hood.
 
-*Table 2. Items still open (no recommendation was made).*
+*Table 2. Items left open on 2026-09-25 (no recommendation was made then), decided by Amish on 2026-10-02.*
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First partner and region for co-design and the first price table | Proposed, awaiting Amish |
-| O2 | Who the $150 volume target is for: cooperatives or individual pickers | Proposed, awaiting Amish |
-| O3 | Extended InGaAs band (1,700 to 1,750 nm) to separate PE from PP | Proposed, awaiting Amish; a paper band study on published reference spectra comes first |
-| WSC-DDR-002 Q2 | How `pair_id` is created in the field | Proposed, awaiting Amish |
-| WSC-DDR-002 Q3 | Whether consented spectra join the WasteWise-ml dataset, and on what terms | Proposed, awaiting Amish |
+| O1 | First partner and region for co-design and the first price table | Decided 2026-10-02: SWaCH in Pune as the first candidate to approach, Pune scrap prices as the first price table |
+| O2 | Who the $150 volume target is for: cooperatives or individual pickers | Decided 2026-10-02: cooperatives |
+| O3 | Extended InGaAs band (1,700 to 1,750 nm) to separate PE from PP | Decided 2026-10-02: eight bands; the band study comes first and decides any ninth band |
+| WSC-DDR-002 Q2 | How `pair_id` is created in the field | Decided 2026-10-02: QR code on the scanner screen, digits as a fallback |
+| WSC-DDR-002 Q3 | Whether consented spectra join the WasteWise-ml dataset, and on what terms | Decided 2026-10-02: yes, opt-in, co-owned by the pickers' organization, CC BY 4.0 with its agreement |
 
 ## Consequences
 

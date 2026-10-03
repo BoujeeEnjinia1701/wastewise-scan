@@ -28,7 +28,7 @@ PARAMS = {
     "z_split": 16.0,          # top of the bottom shell rim
     "gasket_t": 0.6,          # foam gasket squeezed thickness; the top shell rim starts above it
     "body_h": 34.0,           # top of body
-    "wall": 2.5,              # shell wall and floor thickness
+    "wall": 2.0,              # shell wall and floor thickness (2.0 mm decided 2026-10-02, R6)
     "corner_r": 10.0,         # plan corner radius
     "tongue_t": 1.2,          # locating tongue on the bottom shell, inside the top shell wall
     "tongue_h": 2.6,          # height of the tongue above the bottom shell rim
@@ -478,6 +478,12 @@ def check(P=PARAMS, verbose=True):
         fails.append(f"cap mouth at z {top_cap:.1f} hits the shroud flange")
     if (cp["cal_cap"].bounding_box().max.X - cp["cal_cap"].bounding_box().min.X) - 2 * P["cap_wall"] > P["shroud_rim_d"]:
         fails.append("cap bore larger than the shroud rim: no grip")
+    # shell wall: at least four 0.4 mm perimeters, and the 1.2 mm tongue must sit inside it with room for the top shell wall
+    n += 2
+    if P["wall"] < 1.6:
+        fails.append(f"shell wall {P['wall']} mm is under 1.6 mm (four perimeters)")
+    if P["tongue_t"] > P["wall"] - 0.6:
+        fails.append("locating tongue too thick for the shell wall")
     if verbose:
         print(f"{n} constructability checks, {len(fails)} failed")
         for f in fails:

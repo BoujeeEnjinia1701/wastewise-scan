@@ -48,6 +48,24 @@ GRIP_Z = (3.2, 13.6)
 SCREW_XY = [(-68.0, -20.0), (-68.0, 20.0), (68.0, -20.0), (68.0, 20.0)]
 
 
+TITLE = "WasteWise Scan: handheld near-infrared plastic resin scanner"
+
+RENDER_VIEWS = [
+    {"name": "hero", "groups": ["shell", "internal", "context"], "explode": False, "el": 30, "az": -40,
+     "note": "Product render from the front right and above (about 30 deg elevation); the scanner rests on its "
+             "shroud beside a flat hand for scale, sun hood and scan button facing the viewer"},
+    {"name": "exploded", "groups": ["shell", "internal", "accessory"], "explode": True, "el": 28, "az": -55,
+     "note": "Exploded view from the front right and above (about 28 deg elevation): top shell, display, "
+             "frame and hood above; head block, LED ring, photodiode and cell in the bottom shell; "
+             "shroud and window below, with the calibration cap and PTFE disc beside"},
+    {"name": "detail", "groups": ["shell", "internal"], "explode": False, "el": 24, "az": -30,
+     "note": "Detail from the front right and above (about 24 deg elevation): display window, sun hood "
+             "with its clip legs, scan button and power switch"},
+]
+
+CTX_Z = 0.0   # set by product_parts: table height under the shroud tip
+
+
 def _fillet_try(shape, edges, radii):
     """Fillet `edges` with the first radius that gives a valid solid; else return the input."""
     edges = list(edges)
@@ -159,6 +177,8 @@ def product_parts(P=PARAMS):
                     "bom": bom, "group": group, "explode": tuple(float(v) for v in explode)})
 
     bottom, top, grip = _shells(P, D)
+    for sg in (1, -1):      # clip ribs for the sun hood legs, as model.py (rib_z, hood_leg_l)
+        top += Pos(P["board_x"], sg * (W / 2 + 0.5 - 0.01), P["rib_z"] + 0.5) * Box(P["hood_leg_l"] - 4, 1.02, 1.0)
     add("Top shell", top, C_TOP, "plastic", 1, "shell", (0, 0, 72))
     add("Bottom shell", bottom, C_BOTTOM, "plastic", 10, "shell", (0, 0, 0))
     add("Grip overmold (TPU)", grip, C_GRIP, "rubber", 10, "shell", (0, 0, 0))
@@ -278,6 +298,13 @@ def product_parts(P=PARAMS):
     disc = Pos(40.0, -85.0, -P["shroud_h"] + P["ptfe_t"] / 2) * Cylinder(P["ptfe_d"] / 2, P["ptfe_t"])
     disc = _fillet_try(disc, _top_edges(disc), [0.6, 0.3])
     add("PTFE reference disc", disc, C_PTFE, "plastic", 13, "accessory", (10, -40, -30))
+    # ---- context: a flat clay hand beside the scanner for scale (resting on the same surface as the shroud tip)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / ".kit"))
+    from context_parts import forearm_hand
+    arm = forearm_hand(side="left", pose="flat", forearm_len=250.0)
+    bb = arm.bounding_box()
+    arm = Pos(-100.0, -120.0, -P["shroud_h"] - bb.min.Z) * arm
+    add("Hand and forearm (clay, scale)", arm, "#C8CDD3", "clay", None, "context", (0, 0, 0))
     return out
 
 

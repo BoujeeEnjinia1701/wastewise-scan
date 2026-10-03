@@ -3,9 +3,9 @@ doc_id: WSC-PRB-001
 title: WasteWise Scan problem statement
 project: WasteWise Scan
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Citations checked and corrected (Neo et al. year, WIEGO wording, ASTM and WRAP links, trinamiX source); cost constraint per WSC-DDR-001 D2; open questions updated
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Partner, region and price-target questions answered by Amish's decisions of 2026-10-02 (WSC-DEC-001)
 ---
 
 # WasteWise Scan problem statement
@@ -68,9 +72,9 @@ Industry solves this with near-infrared (NIR) spectroscopy. Polymers absorb shor
 
 ## Open questions
 
-- Which users to work with first, and through which partner (a waste picker organization, a cooperative, or a university lab)? Proposed, awaiting Amish; partners are to be picked per area later (WSC-DDR-001 O1).
-- Which region's resin mix and price structure should set the first classifier and price table? Proposed, awaiting Amish (WSC-DDR-001 O1).
-- Is the $150 volume target the price a cooperative would pay, or should the target be lower for individual pickers? Proposed, awaiting Amish (WSC-DDR-001 O2).
+- Which users to work with first, and through which partner (a waste picker organization, a cooperative, or a university lab)? Decided by Amish, 2026-10-02 (WSC-DEC-001): a member-owned waste picker cooperative; the first candidate to approach is SWaCH in Pune, India.
+- Which region's resin mix and price structure should set the first classifier and price table? Decided by Amish, 2026-10-02: Pune, India (WSC-DEC-001).
+- Is the $150 volume target the price a cooperative would pay, or should the target be lower for individual pickers? Decided by Amish, 2026-10-02: it is the price a cooperative pays for a shared scanner (WSC-DEC-001).
 
 ## User research and co-design
 

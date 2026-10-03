@@ -3,7 +3,7 @@ doc_id: WSC-PRC-001
 title: WasteWise Scan design precis
 project: WasteWise Scan
 doc_type: Design precis
-version: "0.5"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -29,11 +29,19 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Constructable design (WSC-DDR-004) and build plan WSC-BLD-001; components, mass and cost from WSC-CAL-001 v0.3; budget as a value-engineering target
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Open questions answered by Amish's decisions of 2026-10-02 (WSC-DEC-001)
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Mass restated for 2.0 mm shell walls (238 g, 258 g with cap); paper band study result; numbers from WSC-CAL-001 v0.4
 ---
 
 # WasteWise Scan design precis
 
-WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.33 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.2 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). Since 2026-10-02 the design is constructable (WSC-DDR-004, open for Amish's review): screws, a gasket, an optical head block, a cell cradle and strap, a display frame and clip legs on the hood were added, and the scanner now weighs about 254 g (274 g with the cap), so the 250 g mass requirement (R6) is not met. The prototype build plan is WSC-BLD-001 ([05-build-plan.md](05-build-plan.md)).
+WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.33 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.4 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). Since 2026-10-02 the design is constructable (WSC-DDR-004, open for Amish's review): screws, a gasket, an optical head block, a cell cradle and strap, a display frame and clip legs on the hood were added, and the scanner now weighs about 238 g (258 g with the cap) with the 2.0 mm shell walls Amish decided on 2026-10-02, so the 250 g mass requirement (R6) is not met, 8 g over with the cap. The prototype build plan is WSC-BLD-001 ([05-build-plan.md](05-build-plan.md)).
 
 ![Hero render](../media/hero.png)
 
@@ -99,7 +107,7 @@ Table 2. Key numbers.
 | Average power | about 0.39 W [F2] | |
 | Battery life | about 22 h [F2] | R5 (8 h) met |
 | Log capacity | about 131,000 scans at 64 B [G1] | R9 met |
-| Mass | about 254 g, 274 g with cap [A3] | **R6 (250 g) not met** |
+| Mass | about 238 g, 258 g with cap [A3] | **R6 (250 g) not met**, 8 g over |
 | Size | 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in), 72 mm high with shroud and sun hood, 68 mm wide over the hood legs [A1] | R6 size met |
 | Display contrast in 100 klx sun | about 1.6:1 unshaded; 5.2:1 where the hood shades the screen [I1, I3, I4] | **R7 at risk** |
 | LED irradiance at 200 mm | 3.9 W/m² against 100 W/m² [H2] | R14 met by estimate |
@@ -107,7 +115,7 @@ Table 2. Key numbers.
 
 ## Key design choices
 
-- **Discrete LEDs and one InGaAs photodiode rather than a spectrometer or a visible-range chip** (WSC-DDR-001 D1). A SWIR spectrometer module costs far more than the budget; a visible-range chip misses the polymer bands. Eight bands are kept because the six-band option (D2) needs a band study on reference spectra that has not been done.
+- **Discrete LEDs and one InGaAs photodiode rather than a spectrometer or a visible-range chip** (WSC-DDR-001 D1). A SWIR spectrometer module costs far more than the budget; a visible-range chip misses the polymer bands. Eight bands are kept: the paper band study (WSC-CAL-001 v0.4, B4) scores a six-band set at 88 % against 89.5 % for eight on approximate reference spectra, which points to the six-band saving, but both are short of 95 % at the assumed item scatter, so the choice waits for measured items.
 - **Contact measurement through a shroud.** Pressing on the item fixes the geometry and removes direct light on the spot. It does not stop light passing through clear items, so clear and translucent items in sun are backed with the black cap and the firmware refuses a result when the dark level shows through-light (WSC-DDR-003 D8, D9).
 - **Low gain and interleaved darks.** The 47 kΩ gain keeps sunlight through clear items inside the ADC range; interleaved dark readings cancel slow ambient changes. Faster changes are handled by the backing step; LED modulation at 2 kHz was checked on paper and does not remove the need for it (WSC-CAL-001 D8).
 - **Say "unknown" rather than guess.** A wrong call can contaminate a bale; the confidence threshold is set for few false results, accepting more unknowns (R3).
@@ -125,7 +133,7 @@ Table 2. Key numbers.
 - **Clear items in sun (R4, now met by estimate).** Light passing through a clear or translucent item reaches the detector from inside the shroud, and hand movement changes it faster than dark subtraction can follow. Decided (WSC-DDR-003 D8, D9): back such items with the black cap (0.36 % error) and refuse a result when the dark level shows through-light. The classifier needs training data in this backed mode.
 - **Display in direct sun (R7, now at risk).** A 400 cd/m² IPS screen washes out in 100 klx sun. Decided (D10): a clip-on sun hood, which gives about 5.2:1 on the shaded part but cannot shade the screen with the sun near its normal or over the open side.
 - **Window crosstalk.** LED light reflected by the window's outer surface reaches the detector at about the same level as the item signal. Decided (D11): an open-air reading in the calibration routine subtracts it. Because a 10 % change from window dirt would leave about 10 % error, the fallback of a baffle extended through the glass (option (b)) is probably needed; that needs measurement at TRL 4.
-- **PE versus PP (R1 at risk).** The 1,650 nm band is clipped by the detector cutoff and only samples the short edge of the 1,650 to 1,750 nm region. Whether to add an extended InGaAs band remains open (O3).
+- **PE versus PP (R1 at risk).** The 1,650 nm band is clipped by the detector cutoff and only samples the short edge of the 1,650 to 1,750 nm region. Decided by Amish, 2026-10-02: keep eight bands, and add an extended InGaAs band only if the paper band study shows PE and PP cannot be told apart to R1 with eight (WSC-DEC-001). The study is done: PE against PP is 93 % with eight bands at the assumed item scatter, above 98 % at 1.0 % scatter, so it neither shows nor rules out the problem and the extended band is not added (WSC-CAL-001 v0.4, B5 to B7).
 
 ## Safety
 
@@ -142,10 +150,10 @@ Table 2. Key numbers.
 
 ## Open questions
 
-1. **First users and region** for co-design and the first price table. Proposed, awaiting Amish (WSC-DDR-001 O1).
-2. **Who the $150 volume target is for:** cooperatives or individual pickers. Proposed, awaiting Amish (O2).
-3. **Extended InGaAs band.** Whether to add a 1,700 to 1,750 nm band to separate PE from PP. Proposed, awaiting Amish (O3).
-4. **Scan record format.** One shared record with a `pair_id` join was decided on this side on 2026-09-25 (WSC-DDR-002 v0.2, WSC-DDR-003 D12); WasteWise-ml has still to adopt it, and how `pair_id` is created in the field is open.
+1. **First users and region** for co-design and the first price table. Decided by Amish, 2026-10-02: a member-owned waste picker cooperative that already sells sorted plastics to scrap buyers; the first candidate to approach is SWaCH in Pune, India, the partner chosen for WasteWise-ml, with Pune scrap prices as the first price table (WSC-DEC-001).
+2. **Who the $150 volume target is for:** decided by Amish, 2026-10-02: cooperatives, buying a shared scanner (WSC-DEC-001).
+3. **Extended InGaAs band.** Decided by Amish, 2026-10-02: eight bands; the band study comes first (WSC-DEC-001). The paper band study is done and is inconclusive; the extended band is not added and is raised as a proposal.
+4. **Scan record format.** One shared record with a `pair_id` join was decided on this side on 2026-09-25 (WSC-DDR-002 v0.2, WSC-DDR-003 D12); WasteWise-ml has still to adopt it, and the pair ID is shown as a QR code on the scanner screen for the phone to scan, with digits as a fallback (decided by Amish, 2026-10-02, WSC-DEC-001).
 5. **Band study.** A paper study on published reference spectra to confirm the band set and whether six bands suffice (WSC-DDR-001 D2, D4). Not yet done.
 
 Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html). General arrangement: [WSC-DWG-001](../cad/drawings/WSC-DWG-001.pdf).

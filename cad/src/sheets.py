@@ -1,4 +1,4 @@
-"""WasteWise Scan general arrangement sheet WSC-DWG-001, Rev P4 (TRL 3, constructable design).
+"""WasteWise Scan general arrangement sheet WSC-DWG-001, Rev P5 (TRL 3, constructable design).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/WSC-DWG-001.svg, .pdf and .png from the parametric model in
@@ -80,13 +80,14 @@ def main():
     sviews = views_of(sec, work / "sec", hidden=())
     sbb = sec.bounding_box()
 
-    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P4",
+    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P5",
               author="Amish Chadha", date=DATE, scale=1.0, theme="technical",
               material="PETG shells, TPU shroud, borosilicate window; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", D0, "AC"),
                          ("P2", "Sun hood added; mass updated (WSC-DDR-003)", D0, "AC"),
                          ("P3", "Layout and labels tidied", D0, "AC"),
-                         ("P4", "Design made constructable (WSC-DDR-004)", DATE, "AC")])
+                         ("P4", "Design made constructable (WSC-DDR-004)", DATE, "AC"),
+                         ("P5", "Shell walls 2.0 mm (R6 decision); mass 238 g", DATE, "AC")])
     k = 1.0
     L = []
 
@@ -147,7 +148,7 @@ def main():
             ((-(P['shroud_rim_d'] / 2 - 2), D["z_item"] + 3), f"TPU shroud, {D['rim_id']:.0f} ID at the rim")]
     lx = sx + vw + 6
     for i, ((uy, wz), text) in enumerate(tags):
-        tyy = sy + 6 + i * (vh - 10) / (len(tags) - 1)
+        tyy = sy + 14 + i * (vh - 18) / (len(tags) - 1)
         L.append(f'<line x1="{Yr(uy):.2f}" y1="{Zr(wz):.2f}" x2="{lx - 1:.2f}" y2="{tyy - 0.8:.2f}" stroke="{MUTED}" stroke-width="0.15"/>')
         L.append(f'<circle cx="{Yr(uy):.2f}" cy="{Zr(wz):.2f}" r="0.5" fill="{INK}"/>')
         L.append(_t(lx, tyy, text, 2.2, 400, INK))
@@ -169,7 +170,7 @@ def main():
         f"Protected 18650 in a printed cradle with contacts, strapped; USB-C in the tail wall",
         f"Scan button {P['button_d']:.0f} panel mount, {P['button_x'] - P['board_x']:.0f} ahead of the display center",
         f"Cal. cap {P['cap_od']:.0f} OD x {P['cap_h']:.0f}, PTFE disc {P['ptfe_d']:.0f} x {P['ptfe_t']:.0f}; stores over the shroud",
-        f"{bb.size.Z:.0f} high with hood and shroud; mass about 254 g, 274 g with cap (WSC-CAL-001 A3)",
+        f"{bb.size.Z:.0f} high with hood and shroud; mass about 238 g, 258 g with cap (WSC-CAL-001 A3)",
         "Third-angle; X along the body, Z up; base of body Z = 0",
     ], x=226.8, y=162, width=190)
     out = s.save(ROOT / "cad" / "drawings" / "WSC-DWG-001")

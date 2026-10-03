@@ -151,7 +151,90 @@ say("B2", f"1,650 nm band: detected centroid {c:.0f} nm; {above * 100:.0f} % of 
           f"responsivity at 1,700 nm {resp(1700):.2f} A/W and at 1,720 nm {resp(1720):.2f} A/W")
 in_2nd = [l for l in BANDS if 1150 <= l <= 1250]
 say("B3", f"Bands inside the 1,150 to 1,250 nm C-H second-overtone region: {in_2nd}; inside 1,650 to 1,750 nm: only the short edge of 1,650 nm")
-STATUS["R1"] = ("At risk", f"8 bands; 1,650 nm band detected centroid {c:.0f} nm, {above * 100:.0f} % of its signal at or above 1,650 nm",
+
+# B4. Paper band study (decision of 2026-10-02, WSC-DDR-001 O3): can eight bands tell PE from PP, and the five resins apart?
+# Reference spectra are built from published near-infrared band assignments (positions and relative strengths of the C-H and
+# aromatic overtone and combination bands of each polymer, as tabulated in the polymer NIR literature). They are NOT digitized
+# spectra: depths and widths are approximate, so the result is a paper indication that a measured set must confirm.
+import numpy as np  # noqa: E402
+
+FEATURES = {   # (centre nm, FWHM nm, relative depth)
+    "PET":  [(1020, 60, .04), (1140, 40, .10), (1195, 50, .05), (1415, 50, .12), (1530, 60, .06), (1660, 45, .18), (1680, 40, .10)],
+    "HDPE": [(1040, 60, .03), (1190, 35, .05), (1210, 45, .22), (1390, 30, .10), (1415, 35, .20), (1725, 40, .55), (1765, 35, .40)],
+    "PP":   [(1190, 35, .16), (1210, 40, .16), (1370, 30, .15), (1395, 30, .18), (1420, 35, .14), (1695, 40, .45), (1725, 40, .40), (1760, 35, .25)],
+    "PS":   [(1020, 60, .05), (1143, 40, .12), (1210, 45, .08), (1420, 50, .06), (1450, 50, .08), (1680, 45, .30), (1700, 40, .15)],
+    "PVC":  [(1130, 50, .03), (1195, 45, .08), (1420, 40, .10), (1500, 60, .04), (1720, 40, .30), (1760, 40, .25)],
+}
+STUDY = {"n": 4000, "scatter_common": 0.15, "scatter_band": 0.015, "tilt": 0.10, "noise_rel": 1.0 / 450.0, "seed": 7}
+
+
+def ref_reflectance(resin, lam):
+    r = 1.0
+    for c, w, dep in FEATURES[resin]:
+        r -= dep * exp(-0.5 * ((lam - c) / (w / 2.3548)) ** 2)
+    return 0.6 * max(r, 0.02)
+
+
+def band_signal(resin, lam0, fwhm):
+    sg = fwhm / 2.3548
+    lams = [lam0 - 4 * sg + i for i in range(int(8 * sg) + 1)]
+    w = [exp(-0.5 * ((l - lam0) / sg) ** 2) * resp(l) for l in lams]
+    return sum(wi * ref_reflectance(resin, l) for wi, l in zip(w, lams)) / sum(w)
+
+
+def band_study(bands, resins, trials=None, seed=None):
+    """Monte Carlo classification with linear discriminant analysis on log band ratios; returns (accuracy, confusion, mean PE/PP pair accuracy)."""
+    rng = np.random.default_rng(STUDY["seed"] if seed is None else seed)
+    n = trials or STUDY["n"]
+    base = {r: np.log([band_signal(r, b, LED_FWHM[b]) for b in bands]) for r in resins}
+    xs, ys = [], []
+    for k, r in enumerate(resins):
+        e = rng.normal(0, STUDY["scatter_band"], (n, len(bands))) + rng.normal(0, STUDY["noise_rel"], (n, len(bands)))
+        tilt = rng.normal(0, STUDY["tilt"], (n, 1)) * (np.array(bands) - np.mean(bands)) / (max(bands) - min(bands))
+        x = base[r] + e + tilt + rng.normal(0, STUDY["scatter_common"], (n, 1))
+        x = x - x.mean(axis=1, keepdims=True)           # the common scale cancels in the log ratio
+        xs.append(x); ys += [k] * n
+    X = np.vstack(xs); y = np.array(ys)
+    mu = np.array([X[y == k].mean(axis=0) for k in range(len(resins))])
+    cov = sum(np.cov(X[y == k].T) for k in range(len(resins))) / len(resins) + 1e-9 * np.eye(len(bands))
+    W = np.linalg.pinv(cov)
+    # fresh test set from the same generator
+    xt, yt = [], []
+    for k, r in enumerate(resins):
+        e = rng.normal(0, STUDY["scatter_band"], (n, len(bands))) + rng.normal(0, STUDY["noise_rel"], (n, len(bands)))
+        tilt = rng.normal(0, STUDY["tilt"], (n, 1)) * (np.array(bands) - np.mean(bands)) / (max(bands) - min(bands))
+        x = base[r] + e + tilt + rng.normal(0, STUDY["scatter_common"], (n, 1))
+        xt.append(x - x.mean(axis=1, keepdims=True)); yt += [k] * n
+    Xt = np.vstack(xt); yt = np.array(yt)
+    d2 = np.stack([np.einsum("ij,jk,ik->i", Xt - m_, W, Xt - m_) for m_ in mu], axis=1)
+    pred = d2.argmin(axis=1)
+    conf = np.zeros((len(resins), len(resins)))
+    for a_, b_ in zip(yt, pred):
+        conf[a_, b_] += 1
+    conf = conf / conf.sum(axis=1, keepdims=True)
+    return float((pred == yt).mean()), conf
+
+
+RES5 = ["PET", "HDPE", "PP", "PS", "PVC"]
+acc8, conf8 = band_study(BANDS, RES5)
+acc6, conf6 = band_study([850, 940, 1200, 1450, 1550, 1650], RES5)
+acc7, conf7 = band_study([b for b in BANDS if b != 1650], RES5)
+accpe, confpe = band_study(BANDS, ["HDPE", "PP"])
+say("B4", f"Paper band study (five resins, {STUDY['n']} simulated items each, band scatter {STUDY['scatter_band'] * 100:.1f} %, tilt, noise 1/450): "
+          f"eight bands {acc8 * 100:.1f} % correct; without the 1,650 nm band {acc7 * 100:.1f} %; six bands (no 1,050 or 1,300 nm) {acc6 * 100:.1f} %")
+say("B5", f"PE versus PP with eight bands: HDPE called PP {confpe[0, 1] * 100:.1f} % of the time, PP called HDPE {confpe[1, 0] * 100:.1f} % "
+          f"(the five-resin confusion HDPE to PP {conf8[1, 2] * 100:.1f} %, PP to HDPE {conf8[2, 1] * 100:.1f} %)")
+R1_STUDY_OK = acc8 >= 0.95 and min(confpe[0, 0], confpe[1, 1]) >= 0.95
+sens = {}
+for sb in (0.015, 0.010, 0.005):
+    keep = STUDY["scatter_band"]; STUDY["scatter_band"] = sb
+    a_, _ = band_study(BANDS, RES5); sens[sb] = a_
+    STUDY["scatter_band"] = keep
+say("B6", f"Sensitivity to band-to-band item scatter (eight bands, five resins): " + "; ".join(f"{k * 100:.1f} % scatter {v * 100:.1f} % correct" for k, v in sens.items()))
+say("B7", f"At the assumed {STUDY['scatter_band'] * 100:.1f} % scatter eight bands {'meet' if R1_STUDY_OK else 'do not meet'} 95 % on the paper spectra; "
+          f"the answer turns on item scatter, which only measured items can fix, so the extended InGaAs band (WSC-DDR-001 O3) is "
+          f"{'not needed on this evidence' if R1_STUDY_OK else 'raised as a proposal for Amish, not added'}")
+STATUS["R1"] = ("At risk", f"8 bands; paper band study {acc8 * 100:.0f} % correct (PE vs PP {min(confpe[0, 0], confpe[1, 1]) * 100:.0f} %); 1,650 nm band detected centroid {c:.0f} nm, {above * 100:.0f} % of its signal at or above 1,650 nm",
                 "95 % correct, 5 resins")
 
 # ------------------------------------------------------------------ C. signal and noise

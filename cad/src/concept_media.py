@@ -52,7 +52,7 @@ context = [Part("Hand", palm + thumb + fingers + wrist, "#C8CDD3"),
 render_all(
     parts, project="WasteWise Scan", title="Handheld resin scanner concept", dwg_no="WSC-DWG-010",
     key_figures=["8 NIR/SWIR bands, 850 to 1,650 nm", "Scan about 0.33 s (WSC-CAL-001)",
-                 "Body 160 x 62 x 34 mm, about 254 g with hood (WSC-CAL-001)",
+                 "Body 160 x 62 x 34 mm, about 238 g, 258 g with cap (WSC-CAL-001)",
                  "About 22 h per charge on one 18650 (WSC-CAL-001)",
                  "$167.50 in parts, prototype (priced BOM)"],
     date="2026-10-02", scale_figure=False, context=context,

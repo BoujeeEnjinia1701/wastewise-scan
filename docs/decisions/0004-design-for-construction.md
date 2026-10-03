@@ -3,7 +3,7 @@ doc_id: WSC-DDR-004
 title: WasteWise Scan design for construction
 project: WasteWise Scan
 doc_type: Design decision record
-version: "0.1"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -13,12 +13,20 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction and open for his review
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Accepted by Amish on 2026-10-02 (A2), with A1 decided as option (a)
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Decision A1 carried into the model: 2.0 mm shell walls, 238 g and 258 g with the cap; record stays Draft"
 ---
 
 # 0004: Design for construction
 
 - **Date:** 2026-10-02
-- **Status:** proposed. The changes in Tables 1 and 2 were made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The items in Table 3 are proposed, awaiting Amish.
+- **Status:** accepted. Amish, 2026-10-02: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." This approves the recommendation written for each open decision in the design decisions register (WSC-DEC-001 v0.1): the changes in Tables 1 and 2 are accepted as made (A2), and A1 is decided as recorded in Table 3. The record stays Draft.
 
 ## Context
 
@@ -55,12 +63,22 @@ The changes keep what the scanner does: the same body size (160 x 62 x 34 mm), t
 | Drawing | WSC-DWG-001 Rev P4; making sketches WSC-DWG-101 to 109 added. | Follows the model. |
 | Documents | WSC-PRC-001 v0.5 and WSC-REQ-001 v0.5: mass, cost, components and R6 and R12 status updated. | Follows the model. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Decided by Amish, 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | R6 is now not met: 274 g with the cap against 250 g (254 g without it). | (a) shell walls 2.0 mm instead of 2.5 mm, keeping the bosses and ribs (saves about 20 g; the drop case R10 is then checked at TRL 4); (b) count R6 without the cap, which stores on the shroud but can be left in a pocket (254 g, still 4 g over); (c) accept about 275 g and restate R6. | (a), and weigh the first prototype at TRL 4 before deciding on (b) or (c). |
-| A2 | Whether to accept the changes P1 to P12 as the constructable design. | Accept; accept with changes; reject. | Accept. |
+| A1 | R6 is now not met: 274 g with the cap against 250 g (254 g without it). | (a) shell walls 2.0 mm instead of 2.5 mm, keeping the bosses and ribs (saves about 20 g; the drop case R10 is then checked at TRL 4); (b) count R6 without the cap, which stores on the shroud but can be left in a pocket (254 g, still 4 g over); (c) accept about 275 g and restate R6. | (a), and weigh the first prototype at TRL 4 before deciding on (b) or (c). **Decided by Amish, 2026-10-02: (a).** R6 stays not met (about 254 g with the cap, 4 g over) until the prototype is weighed; (b) is not used because the cap is carried for backing clear items. The 2.0 mm walls are now in the model (v0.3 of this record): 238 g, 258 g with the cap, 8 g over, because the shells saved 17 g rather than about 20 g (WSC-CAL-001 v0.4, A3). |
+| A2 | Whether to accept the changes P1 to P12 as the constructable design. | Accept; accept with changes; reject. | Accept. **Decided by Amish, 2026-10-02: accepted as made.** |
+
+*Table 4. Carried into the model, 2026-10-02 (A1).*
+
+| Item | Change | Reason |
+| --- | --- | --- |
+| Shell walls | Both shells 2.0 mm (was 2.5 mm); bosses, ribs, tongue and gasket unchanged. The model's 314 checks pass, including a new check that the wall is at least 1.6 mm and the tongue fits inside it. | Decision A1, option (a) |
+| Parts that follow | The display frame is 12 mm tall (was 11.5 mm) because the ceiling is 0.5 mm higher; the cell strap legs stand 0.5 mm taller; the shell prints with five perimeters. | The thinner floor and ceiling |
+| Mass | Top shell 42 g, bottom shell 47 g (were 51 g and 56 g); scanner 238 g, 258 g with the cap [A3]. | Model volumes |
+| Drawings | WSC-DWG-001 Rev P5; making sketches WSC-DWG-101 and 105 and the shell pictures regenerated. | Follows the model |
+| Drop case | Cell load unchanged (about 550 N); thin shell corners checked in the drop test at TRL 4 (R10). | Decision A1 |
 
 ## Consequences
 

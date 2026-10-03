@@ -3,7 +3,7 @@ doc_id: WSC-DEC-001
 title: WasteWise Scan design decisions register
 project: WasteWise Scan
 doc_type: Design decisions register
-version: "0.1"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -13,6 +13,14 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Register opened with the build plan; budget treated as a value-engineering target
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Amish approved the recommendations for open items 1 to 7 on 2026-10-02 (WSC-DDR-004 accepted, R6 by thinner walls, SWaCH as first candidate partner, cooperative price, eight bands, QR pair ID, consented spectra terms); moved to decisions made
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Decisions carried out: 2.0 mm walls in the model (R6 238 g, 258 g with the cap); paper band study result raised as an open decision on the extended InGaAs band"
 ---
 
 # WasteWise Scan design decisions register
@@ -21,15 +29,9 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Accept the design-for-construction changes P1 to P12 (shell screws and gasket, window clamp, shroud flange, optical head block, photodiode seat, cradle and strap, USB-C seat, display frame, button hole, slide switch, hood clips, calibration cap) | Accept; accept with changes; reject | Accept | The whole build plan | WSC-DDR-004, A2 |
-| 2 | Mass (R6) is now not met: 274 g with the cap, 254 g without, against 250 g | (a) shell walls 2.0 mm instead of 2.5 mm, saving about 20 g, with the drop case checked at TRL 4; (b) count R6 without the cap; (c) accept about 275 g and restate R6 | (a), then weigh the first prototype before (b) or (c) | Shell print settings and the making sketches of both shells | WSC-DDR-004, A1; WSC-CAL-001 [A3] |
-| 3 | First partner and region for co-design and the first price table | Partners are picked per area later | None yet | Not part of the TRL 3 build; sets the price table in the firmware | WSC-DDR-001, O1 |
-| 4 | Who the USD 150 value-engineering target is for: cooperatives or individual pickers | Cooperatives; individual pickers | None yet | Not part of the build | WSC-DDR-001, O2 |
-| 5 | An extended InGaAs band (1,700 to 1,750 nm) to separate PE from PP | Add a ninth band on an extended InGaAs detector; keep eight bands | None yet; a paper band study on published reference spectra comes first | The LED set, the photodiode and the head block pockets | WSC-DDR-001, O3 |
-| 6 | How the pair ID that joins a scan to a WasteWise-ml photo is created in the field | Typed digits; a sticker; the phone scanning a code on the scanner screen | None yet | Firmware only | WSC-DDR-002, question 2 |
-| 7 | Whether consented spectra join the WasteWise-ml dataset, and on what license and ownership terms | To be set with the WasteWise-ml side | None yet | Not part of the build | WSC-DDR-002, question 3 |
+| # | Decision | Options | Recommendation | Source |
+| --- | --- | --- | --- | --- |
+| 1 | Whether to add the extended InGaAs band now. The paper band study (WSC-CAL-001 v0.4, B4 to B7) gave 89.5 % correct with eight bands and 93 % for PE against PP at the assumed item scatter, above 98 % at 1.0 % scatter, so it neither shows nor rules out the problem that would trigger it. | (a) keep eight bands and settle it with the first labeled item set at TRL 4; (b) add a 1,700 to 1,750 nm band and an extended InGaAs photodiode now (extra cost not yet quoted; extended InGaAs photodiodes cost more than the USD 30 standard part). | (a): the result turns on item scatter, which only measured items can fix. | WSC-DDR-001, O3 |
 
 ## To confirm when parts are bought
 
@@ -50,7 +52,7 @@ Value-engineering target: USD 150 (a hypothetical control target, not a limit). 
 
 - The largest lines are the eight LEDs with their drivers (USD 62; the six short-wave infrared LEDs cost about USD 8 to 15 each), the InGaAs photodiode (USD 30) and the display board (USD 20). Optics are 55 % of the cost.
 - Making the design constructable added USD 3.50 net: the display frame, cell strap and gasket (lines 17 to 19) and more fixings; the bought cell holder became contacts in a printed cradle, which saved USD 1.
-- Savings worth trying: the six-band option (dropping 1,050 and 1,300 nm saves about USD 18) if the band study shows six bands suffice (WSC-DDR-001 D2); buying the LEDs as a set from one maker; a second source for the photodiode; at volume, a bare ESP32-S3 module and display in place of the display board.
+- Savings worth trying: the six-band option (dropping 1,050 and 1,300 nm saves about USD 18) if measured items show six bands suffice (WSC-DDR-001 D2; the paper band study scores six bands at 88 % against 89.5 % for eight, WSC-CAL-001 v0.4 B4); buying the LEDs as a set from one maker; a second source for the photodiode; at volume, a bare ESP32-S3 module and display in place of the display board.
 
 ## Decisions made
 
@@ -61,3 +63,10 @@ Value-engineering target: USD 150 (a hypothetical control target, not a limit). 
 | 2026-09-26 | WasteWise Scan chosen as the pilot for product-grade renders; every drawing names the project and its repository | Amish | `docs/REVIEW.md`, session 2026-09-26 |
 | 2026-09-30 | Make the design physically buildable while drawing the build plan; outstanding decisions go in this register, not the build plan | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." | WSC-DDR-004 (changes open for review, item 1 above) |
 | 2026-10-01 | `budget_usd` is a value-engineering target, not a limit | Amish: "the budgets are a hypothethical control target to ensure we are thinking along a value engineering lens." | This register, Value engineering |
+| 2026-10-02 | Design for construction accepted: the changes P1 to P12 of WSC-DDR-004, as made | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-004, A2 |
+| 2026-10-02 | Mass (R6): 2.0 mm shell walls, keeping the bosses and ribs, with the drop case checked at TRL 4; R6 stays not met until the first prototype is weighed (carried into the model 2026-10-02: 238 g, 258 g with the cap, 8 g over, since the shells saved 17 g rather than about 20 g), and the cap stays counted because it is carried for backing clear items | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-004, A1; WSC-CAL-001 [A3] |
+| 2026-10-02 | First partner and region: a member-owned waste picker cooperative that already sells sorted plastics to scrap buyers; the first candidate to approach is SWaCH in Pune, India, the partner chosen for WasteWise-ml, with Pune scrap prices as the first price table | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-001, O1 |
+| 2026-10-02 | Value-engineering target: the USD 150 value-engineering target is the price a cooperative pays for a shared scanner, not an individual picker | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-001, O2 |
+| 2026-10-02 | Extended InGaAs band: eight bands for the prototype; the paper band study on published reference spectra comes first, and the extended InGaAs band is added only if that study shows PE and PP cannot be told apart to R1 with eight | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-001, O3 |
+| 2026-10-02 | Pair ID in the field: the scanner creates the pair ID and shows it as a QR code on its screen for the phone to scan, with the same short code in digits as a typed fallback | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-002, question 2 |
+| 2026-10-02 | Consented spectra: consented spectra join the WasteWise-ml field dataset on the same terms as field photos: opt-in per scan, co-owned by the pickers' organization, and published under CC BY 4.0 only with that organization's agreement | Amish: "APPROVED: The open decisions from the last wave (TremorTrace to ZeerBox) came in after the review and aren't on the page either." | WSC-DDR-002, question 3 |

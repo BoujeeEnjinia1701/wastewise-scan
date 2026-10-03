@@ -3,7 +3,7 @@ doc_id: WSC-BLD-001
 title: WasteWise Scan prototype build plan
 project: WasteWise Scan
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -13,6 +13,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: First build plan, with pictures by component and step; design made constructable (WSC-DDR-004)
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: Shell walls 2.0 mm (five perimeters); mass estimate 238 g and 258 g; pictures of the shells, display frame and sections regenerated
 ---
 
 # WasteWise Scan prototype build plan
@@ -62,7 +66,7 @@ Make and check each component before the assembly step that needs it. Sizes are 
 
 **How to make it.**
 
-1. Print open side up with 0.2 mm layers, six perimeters (so the 2.5 mm walls are solid) and 40 % infill. Support is needed only under the USB-C opening.
+1. Print open side up with 0.2 mm layers, five perimeters (so the 2.0 mm walls are solid) and 40 % infill. Support is needed only under the USB-C opening.
 2. Check the window hole: a 25.4 mm hole through the floor, 55 mm ahead of the body centre on the centre line. The window must drop in with a little play.
 3. Clear the three 3.4 mm holes round the window hole (on a 40 mm circle) and the four 3.4 mm holes through the corner bosses with a drill by hand.
 4. Check the four counterbores on the underside: 6.2 mm across and 3.2 mm deep, so the screw heads sit below the surface.
@@ -376,7 +380,7 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | --- | --- | --- | --- |
 | Shells closed and sealed | R10 | Look along the joint under a lamp; feel for rocking | Even gasket line all round; bosses touching; no rocking |
 | Optics seated | R1, R4 | Look into the shroud with the scanner off | Window clean and level; no gap round the flange |
-| Mass | R6 | Weigh with and without the cap | Record both; the estimate is 254 g and 274 g |
+| Mass | R6 | Weigh with and without the cap | Record both; the estimate is 238 g and 258 g |
 | LED on-time limit | R14 | Bench supply in place of the cell, 300 mA limit; force one LED switch on from a test pin | The LED goes off within the hardware limit with the firmware stalled |
 | First power | R5 | Bench supply at 3.7 V, 300 mA limit, in place of the cell | Current under 200 mA idle; the display starts |
 | Charging | R5 | Cell fitted, USB-C supply, switch on; cell temperature checked | Charge current flows and stops at 4.2 V; cell stays under 45 °C |
@@ -412,7 +416,7 @@ Stop at each point. Carry on only when everything listed is true.
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 312 checks); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/WSC-DWG-101` to `WSC-DWG-109`.
 - General arrangement: `cad/drawings/WSC-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (WSC-CAL-001 v0.3) and `docs/04-calcs/sizing.py`; mass [A3], drop loads [J2], cell strap [J4], scan time [E2], LED exposure [H2], cost [K1], [K2].
+- Calculations: `docs/04-calcs/01-sizing.md` (WSC-CAL-001 v0.4) and `docs/04-calcs/sizing.py`; mass [A3], drop loads [J2], cell strap [J4], scan time [E2], LED exposure [H2], cost [K1], [K2].
 - Bill of materials: `bom/bom.csv`.
 - Decisions: `docs/decisions/0004-design-for-construction.md` (WSC-DDR-004), with WSC-DDR-001 to WSC-DDR-003.
 - Requirements: `docs/03-requirements.md` (WSC-REQ-001 v0.5).
