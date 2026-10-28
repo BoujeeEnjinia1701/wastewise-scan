@@ -42,7 +42,8 @@ A = {
     "adc_noise_uv": 5.0,        # µV rms per conversion at gain 1 (assumed, conservative)
     "adc_fs": 2.048,            # V, internal reference
     "rail_v": 3.3,              # TIA output swing limit
-    "n_avg": 4,                 # conversions averaged per reading
+    "n_avg": 2,                 # conversions per reading (fix F2, 2026-10-24: was 4 in one cycle)
+    "n_cycles": 4,              # fix F2: the whole dark-band-dark sequence is repeated 4 times and averaged
     "settle_ms": 2.0,           # LED switch-on and TIA settling
     "classify_ms": 20.0, "display_ms": 50.0, "debounce_ms": 20.0,
     "Rf_concept": 1.0e6,        # TIA feedback, TRL 2 concept
@@ -51,12 +52,19 @@ A = {
     "T_diffuse_clear": 0.30,    # diffuse transmittance of a clear or translucent item wall (worst case)
     "leak_opaque": 1.0e-3,      # fraction of the clear-item case that leaks past the rim on an opaque, curved item
     "ambient_drift": 0.01,      # relative change of ambient light per 10 ms from hand movement (assumed)
-    "dark_gap_ms": 7.0,         # time between a band reading and the mean of its two dark readings
-    "min_snr": 200.0,           # needed to resolve 0.5 % reflectance differences
+    # dark_gap_ms is derived below from the reading time (fix F2; the reviewer of WSC-STM-001 found the old 7 ms
+    # inconsistent with a 14.1 ms reading): a band reading and each of its dark readings are one reading apart
+    "min_snr": 600.0,           # resolve 0.5 % reflectance differences at 3 sigma (was 200, 1 sigma; independent review)
     "err_limit": 0.005,         # largest acceptable ambient error, relative to the band signal (0.5 %)
     "leak_backed": 1.0e-3,      # fraction of the clear-item through-light left when the item is backed with the black cap
     "mod_hz": 2000.0,           # LED modulation frequency for the synchronous demodulation option (paper check only)
     "xtalk_change": 0.10,       # assumed change of the window crosstalk from dirt or scratches between open-air readings
+    # fix F1 leak through and round the baffle tube (all assumed, to measure at TRL 4 on a coupon and a built head)
+    "tube_hit": 1.0e-2,         # share of an LED's power that reaches the tube wall (beam wings, scatter in the glass and at the cored edge)
+    "tube_T": 1.0e-4,           # transmission of the 1 mm carbon-black PETG wall, with the 0.2 mm gap sealed by a black RTV bead
+    "tube_capture": 0.1,        # share of the light through the wall that reaches the photodiode through its 4 mm aperture
+    "tube_change": 0.05,        # change of that leak between open-air readings (temperature, ageing); it does not see window dirt
+    "pulse_peak": 1.571,        # peak over mean deceleration for a half-sine impact pulse (pi / 2; independent review)
     # power
     "i_mcu_ma": 45.0, "i_display_ma": 60.0, "i_afe_ma": 3.0,        # ESP32-S3 at 240 MHz, radio off; display at full backlight
     "i_led_ma": 100.0, "v_cell": 3.6, "cap_mah": 3000.0, "usable": 0.80,
@@ -243,8 +251,11 @@ A_det = pi * (A["pd_active_d"] / 2) ** 2
 d = D["d_pd_item"] / 1000.0
 g_coll = A_det / (pi * (A["spot_r"] ** 2 + d ** 2))        # Lambertian disc of radius spot_r, on axis
 say("C1", f"Detector {A['pd_active_d'] * 1e3:.1f} mm dia, {d * 1e3:.0f} mm from the item; collection factor {g_coll:.2e} per unit reflectance")
-enbw = A["adc_rate"] / 2 / A["n_avg"]
-v_adc = A["adc_noise_uv"] * 1e-6 / sqrt(A["n_avg"])
+N_CONV = A["n_avg"] * A["n_cycles"]                       # conversions averaged per band per scan
+enbw = A["adc_rate"] / 2 / N_CONV
+v_adc = A["adc_noise_uv"] * 1e-6 / sqrt(N_CONV)
+t_read = A["settle_ms"] + A["n_avg"] * 1000.0 / A["adc_rate"]   # ms, one reading (fix F2)
+A["dark_gap_ms"] = t_read                                   # a band reading and each dark reading are one reading apart
 
 
 def signal(lam, rho, Rf):
@@ -270,7 +281,7 @@ lam_max = max(BANDS, key=lambda l: signal(l, A["rho_white"], 1.0)[1])
 _, Imax, _ = signal(lam_max, A["rho_white"], A["Rf_concept"])
 say("C3", f"Concept 1 MΩ gain in shade: strongest band ({lam_max} nm) on white {Imax * 1e6:.2f} µA gives {Imax * A['Rf_concept']:.2f} V "
           f"({'saturates' if Imax * A['Rf_concept'] > A['rail_v'] else 'within'} a {A['rail_v']} V rail)")
-say("C4", f"Worst-case SNR in shade (clear item, 4 averages, {A['Rf'] / 1e3:.0f} kΩ): {worst_snr:.0f}; needed {A['min_snr']:.0f}")
+say("C4", f"Worst-case SNR in shade (clear item, {N_CONV} conversions per band in {A['n_cycles']} cycles, {A['Rf'] / 1e3:.0f} kΩ): {worst_snr:.0f}; needed {A['min_snr']:.0f}")
 # window crosstalk: LED light reflected by the window's outer (item-side) surface into the detector
 led_r, led_z, pd_z = P["led_ring_r"], P["led_z"], P["pd_z"]
 L_img = sqrt(led_r ** 2 + (led_z + pd_z) ** 2) / 1000.0     # image of the LED in the z = 0 surface to the detector
@@ -283,6 +294,22 @@ resid = x_ratio * A["xtalk_change"]
 say("C7", f"Open-air reading in the calibration routine removes the fixed crosstalk offset; a {A['xtalk_change'] * 100:.0f} % change of that offset "
           f"from window dirt leaves about {resid * 100:.0f} % of the signal; to stay under {A['err_limit'] * 100:.1f} % the offset must stay within "
           f"{A['err_limit'] / x_ratio * 100:.1f} % of itself between open-air readings")
+# C8: fix F1 (2026-10-24, decided under Amish's standing instruction of 2026-10-23): the baffle tube passes through a hole in
+# the LED window and holds a separate detector window, so light reflected inside the LED window cannot reach the detector by
+# the C5 path (geometric optics: every ray to the photodiode now enters the detector window from below, from the item side).
+# What is left is LED light that hits the tube wall directly and leaks through it or round the sealed gap. That leak does
+# not see window dirt; the open-air reading removes it, and only its change between readings (tube_change) is an error.
+sig_frac = A["T_window"] ** 2 * A["rho_item"] * g_coll       # item signal at the detector per unit LED power
+leak_frac = A["tube_hit"] * A["tube_T"] * A["tube_capture"]
+x_after = leak_frac / sig_frac
+resid_after = x_after * A["tube_change"]
+say("C8", f"Fix F1, baffle tube through the glass with a separate {P['det_win_d']:.1f} mm detector window: the C5 path is closed by geometry; "
+          f"direct LED light through the {(P['tube_od'] - P['tube_bore']) / 2:.0f} mm tube wall and sealed gap is about {x_after * 100:.3f} % of a "
+          f"0.5-reflectance item's signal (assumed {A['tube_hit']:.0e} of the LED power on the wall, {A['tube_T']:.0e} through it, "
+          f"{A['tube_capture']:.1f} captured); the open-air reading removes it, and a {A['tube_change'] * 100:.0f} % change between readings leaves "
+          f"{resid_after * 100:.4f} % (limit {A['err_limit'] * 100:.1f} %); the wall opacity needed to stay under the limit is "
+          f"{A['tube_T'] * A['err_limit'] / resid_after:.0e} or less")
+CROSSTALK = dict(before=resid, after=resid_after)
 say("C6", f"Black item (reflectance {A['rho_black']}) returns {black_ratio * 100:.0f} % of a typical item's signal; "
           f"an 'unknown' threshold at mean reflectance 0.08 separates it with SNR over {worst_snr * A['rho_black'] / A['rho_clear']:.0f}")
 STATUS["R3"] = ("Not verifiable at TRL 3", "black items fall below the 0.08 reflectance threshold; wrong-result rate needs item data", "2 % or fewer wrong")
@@ -300,9 +327,10 @@ say("D2", f"At 1 MΩ that is {I_amb * A['Rf_concept']:.1f} V (saturated); at {A[
           f"({'within' if I_amb * A['Rf'] < A['adc_fs'] else 'over'} the {A['adc_fs']} V ADC range)")
 _, _, V1650c = signal(1650, A["rho_clear"], A["Rf"])
 ratio = I_amb * A["Rf"] / V1650c
-err = A["ambient_drift"] * (A["dark_gap_ms"] / 10.0) * I_amb * A["Rf"]
+AVG = sqrt(A["n_cycles"])     # fix F2: ambient changes in the 4 cycles, about 140 ms apart, are taken as independent (assumed)
+err = A["ambient_drift"] * (A["dark_gap_ms"] / 10.0) * I_amb * A["Rf"] / AVG
 say("D3", f"Ambient is {ratio:.0f} times the 1,650 nm signal from a clear item; a {A['ambient_drift'] * 100:.0f} % change per 10 ms "
-          f"leaves {err * 1e3:.1f} mV after interleaved dark subtraction, against {V1650c * 1e3:.2f} mV of signal")
+          f"leaves {err * 1e3:.1f} mV after interleaved dark subtraction over {A['n_cycles']} cycles (dark gap {A['dark_gap_ms']:.1f} ms), against {V1650c * 1e3:.2f} mV of signal")
 snr_sun = V1650c / sqrt(noise(I_amb + 0, A["Rf"]) ** 2)
 say("D4", f"Shot-noise-limited SNR in sun, clear item, 1,650 nm: {snr_sun:.0f}; the ambient drift error, not noise, sets the limit")
 err_opq = err * A["leak_opaque"]
@@ -316,7 +344,7 @@ err_b = err * A["leak_backed"]
 say("D6", f"Clear item backed with the cap (PTFE behind the wall, black cap outside): effective reflectance {rho_backed:.2f}, "
           f"1,650 nm signal {V1650b * 1e3:.2f} mV; through-light cut to {A['leak_backed']:.0e}; drift error {err_b * 1e6:.1f} µV, "
           f"{err_b / V1650b * 100:.2f} % of signal (limit {A['err_limit'] * 100:.1f} %)")
-k_prompt = A["err_limit"] / (A["ambient_drift"] * A["dark_gap_ms"] / 10.0)
+k_prompt = A["err_limit"] / (A["ambient_drift"] * A["dark_gap_ms"] / 10.0 / AVG)
 say("D7", f"Firmware rule: show 'shade or back with cap' instead of a result when the mean dark level exceeds {k_prompt:.2f} times the "
           f"weakest band reading. Clear unbacked in sun {I_amb * A['Rf'] / V1650c:.0f} (prompt); backed {I_amb * A['Rf'] * A['leak_backed'] / V1650b:.2f}; "
           f"opaque {I_amb * A['Rf'] * A['leak_opaque'] / V1650o:.2f} (result shown)")
@@ -334,15 +362,15 @@ print("E. Scan timing (R2)")
 t_conv = 1000.0 / A["adc_rate"]
 t_read = A["settle_ms"] + A["n_avg"] * t_conv
 n_read = len(BANDS) + (len(BANDS) + 1)            # each band between two dark readings
-t_scan = n_read * t_read + A["classify_ms"] + A["display_ms"] + A["debounce_ms"]
+t_scan = A["n_cycles"] * n_read * t_read + A["classify_ms"] + A["display_ms"] + A["debounce_ms"]
 say("E1", f"One reading {t_read:.1f} ms ({A['settle_ms']:.0f} ms settle plus {A['n_avg']} conversions of {t_conv:.2f} ms); "
-          f"{n_read} readings (8 bands, 9 interleaved darks) {n_read * t_read:.0f} ms")
+          f"{n_read} readings (8 bands, 9 interleaved darks) {n_read * t_read:.0f} ms per cycle; {A['n_cycles']} cycles {A['n_cycles'] * n_read * t_read:.0f} ms")
 say("E2", f"Button to result {t_scan:.0f} ms ({t_scan / 1000:.2f} s) against 1.5 s")
 STATUS["R2"] = ("Met" if t_scan <= 1500 else "Not met", f"{t_scan / 1000:.2f} s", "1.5 s")
 
 # ------------------------------------------------------------------ F. power
 print("F. Power and battery (R5)")
-led_j = len(BANDS) * A["i_led_ma"] / 1000 * 3.7 * t_read / 1000
+led_j = A["n_cycles"] * len(BANDS) * A["i_led_ma"] / 1000 * 3.7 * t_read / 1000
 led_ma = led_j * A["scans_per_min"] / 60.0 / A["v_cell"] * 1000
 i_tot = A["i_mcu_ma"] + A["i_display_ma"] + A["i_afe_ma"] + led_ma
 wh = A["cap_mah"] / 1000 * A["v_cell"]
@@ -368,7 +396,7 @@ om = 2 * pi * (1 - cos(radians(A["led_half_angle"])))
 I_max = max(LED_MW.values()) * 1e-3 / om
 E200 = I_max / 0.2 ** 2
 E24 = I_max / (D["d_led_item"] / 1000.0) ** 2
-duty = t_read / 1000 * A["scans_per_min"] / 60.0
+duty = A["n_cycles"] * t_read / 1000 * A["scans_per_min"] / 60.0
 field = pi * (0.011 * 0.2 / 2) ** 2
 L_eff = I_max / field * 10 ** ((700 - 850) / 500)
 L_lim = 6000 / 0.011
@@ -413,14 +441,16 @@ decel_tpu = A["drop_h"] / A["stop_tpu_m"]
 m_tot = (m_scanner) / 1000
 say("J1", f"Drop {A['drop_h']} m: impact {m_tot * g * A['drop_h']:.1f} J; about {decel_shell:.0f} g on a shell corner "
           f"({A['stop_shell_m'] * 1e3:.0f} mm crush), about {decel_tpu:.0f} g on the shroud ({A['stop_tpu_m'] * 1e3:.0f} mm)")
-say("J2", f"Cell retention needed on a corner drop {A['m_cell'] / 1000 * g * decel_shell:.0f} N; display board {A['m_board'] / 1000 * g * decel_shell:.0f} N")
-F_cell = A["m_cell"] / 1000 * g * decel_shell
+say("J2", f"Cell retention needed on a corner drop {A['m_cell'] / 1000 * g * decel_shell:.0f} N mean, {A['m_cell'] / 1000 * g * decel_shell * A['pulse_peak']:.0f} N peak; display board {A['m_board'] / 1000 * g * decel_shell:.0f} N mean")
+F_mean = A["m_cell"] / 1000 * g * decel_shell
+F_cell = F_mean * A["pulse_peak"]          # peak of a half-sine pulse (independent review of WSC-STM-001)
 span = 2 * D["strap_y"]
 Zs = P["strap_w"] * P["strap_t"] ** 2 / 6
 sig = F_cell * span / 4 / Zs
-say("J4", f"Cell strap {P['strap_w']:.0f} x {P['strap_t']:.0f} mm PETG over a {span:.0f} mm span, cell load {F_cell:.0f} N at mid-span: "
-          f"bending stress {sig:.0f} MPa against about {A['petg_strength']:.0f} MPa ({A['petg_strength'] / sig:.1f} times); "
-          f"each M3 heat-set insert carries {F_cell / 2:.0f} N")
+sig_old = F_cell * span / 4 / (10.0 * 8.0 ** 2 / 6)
+say("J4", f"Cell strap {P['strap_w']:.0f} x {P['strap_t']:.0f} mm PETG (fix F3; was 10 x 8 mm) over a {span:.0f} mm span; cell load {F_mean:.0f} N mean, "
+          f"{F_cell:.0f} N peak (half-sine, x {A['pulse_peak']:.2f}) at mid-span: bending stress {sig:.0f} MPa against about {A['petg_strength']:.0f} MPa "
+          f"({A['petg_strength'] / sig:.2f} times; the 10 x 8 mm strap would reach {sig_old:.0f} MPa); each M3 heat-set insert carries {F_cell / 2:.0f} N peak")
 dT = A["drift_limit"] / abs(A["led_tc"])
 say("J3", f"LED output drifts {abs(A['led_tc']) * 100:.1f} %/°C: the 5 % drift warning trips after about {dT:.1f} °C change since the last white reference")
 STATUS["R10"] = ("Not verifiable at TRL 3", f"corner drop about {decel_shell:.0f} g; cell needs {A['m_cell'] / 1000 * g * decel_shell:.0f} N retention", "1.2 m drop, IP54, 0 to 45 °C")

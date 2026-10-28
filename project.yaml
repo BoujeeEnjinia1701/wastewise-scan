@@ -5,18 +5,32 @@ repo: BoujeeEnjinia1701/wastewise-scan         # GitHub repository, shown on eve
 area: Circular Materials
 trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
+stage: P3                # pipeline stage, STANDARDS section 19 (kit 1.9.1 upgrade, 2026-10-24)
+stem_check: open         # WSC-STM-001 v0.1: no failed row after fixes F1 to F4; S12, S17, S18, S19, S22, S23 need TRL 4 data
+concept_options: [A, B]  # WSC-OPT-001: A eight-band LED scanner (current design), B tunable-filter spectrometer; within 10 %, choice awaiting Amish (WSC-DDR-005)
 design_state: constructable   # STANDARDS section 18; WSC-DDR-004
 trl_evidence:
   - docs/01-problem.md
+  - docs/01b-stem-check.md
   - docs/02-concept.md
+  - docs/02a-concept-options.md
+  - docs/03a-user-requirements.md
   - docs/03-requirements.md
+  - docs/03b-traceability.md
+  - docs/04-calcs/stem_check.py
+  - docs/04-calcs/stem_results.csv
   - docs/decisions/0001-trl2-review-decisions.md
   - docs/decisions/0002-scan-record-format.md
   - docs/decisions/0003-recommendations-accepted.md
   - docs/decisions/0004-design-for-construction.md
+  - docs/decisions/0005-concept-selection.md
   - docs/04-calcs/01-sizing.md
   - docs/04-calcs/sizing.py
   - cad/src/model.py
+  - cad/src/wws_parts.py
+  - cad/fidelity.json
+  - cad/step/A-assembly.step
+  - cad/step/B-assembly.step
   - cad/step/wastewise-scan-assembly.step
   - cad/stl/wastewise-scan-top-shell.stl
   - cad/src/sheets.py
@@ -26,6 +40,16 @@ trl_evidence:
   - docs/05-build-plan.md
   - docs/06-design-decisions.md
   - cad/src/build_plan_media.py
+  - cad/src/product_model.py
+  - docs/05-build-plan/overview.png
+  - docs/07-regulatory.md
+  - docs/08-feasibility.md
+  - docs/09-risk.md
+  - docs/10-market.md
+  - docs/11-plan.md
+  - media/hero.png
+  - media/concept-blueprint.png
+  - media/model.glb
 shortlisted: false
 pitch: >-
   Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.

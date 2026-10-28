@@ -1,14 +1,14 @@
 # WasteWise Scan
 
-![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386583570.svg)](https://zenodo.org/badge/latestdoi/1386583570) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/wastewise-scan/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/wastewise-scan)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Stage P3](https://img.shields.io/badge/stage-P3%20design%20outputs-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386583570.svg)](https://zenodo.org/badge/latestdoi/1386583570) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/wastewise-scan/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/wastewise-scan/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/wastewise-scan)
 
-**Area:** Circular Materials · **TRL:** 3 of 9 (proof of concept on paper) · **Budget:** USD 150 value-engineering target; constructable prototype USD 167.50 in parts · **Difficulty:** 3 of 5
+**Area:** Circular Materials · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** USD 150; parts USD 167.50 · **Difficulty:** 3 of 5
 
 Handheld near-infrared scanner that identifies common plastic resins (PET, HDPE, PP, PS, PVC) in about a second using a low-cost multispectral sensor, shows the result and a local price grade, and logs scans. It pairs with WasteWise-ml for items the spectrum cannot resolve.
 
 ![WasteWise Scan: handheld near-infrared resin scanner, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/WSC-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
+[Studio render](media/render-studio.png) · [Exploded render](media/render-exploded.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement WSC-DWG-001 (PDF)](cad/drawings/WSC-DWG-001.pdf) · [STEM check](docs/01b-stem-check.md) · [Concept options](docs/02a-concept-options.md) · [Requirements](docs/03-requirements.md) · [Traceability](docs/03b-traceability.md) · [Calculations WSC-CAL-001](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -55,13 +55,25 @@ Cameras cannot reliably tell PET from PP or HDPE, yet resin type sets the price 
 
 ## Concept
 
-Press the soft shroud against an item and press the button. The scanner pulses eight near-infrared bands from 850 to 1,650 nm, reads the reflection with an InGaAs photodiode, and in about 0.33 s (calculated) shows the resin, a confidence mark and the local price grade. Black, dark and low-confidence items read "unknown" and can be passed to WasteWise-ml. A white reference inside the protective cap keeps it calibrated.
+Press the soft shroud against an item and press the button. The scanner pulses eight near-infrared bands from 850 to 1,650 nm, reads the reflection with an InGaAs photodiode, and in about 0.64 s (calculated) shows the resin, a confidence mark and the local price grade. Black, dark and low-confidence items read "unknown" and can be passed to WasteWise-ml. A white reference inside the protective cap keeps it calibrated.
 
 The scaffold named an AS7265x-class sensor, but that chip stops at 940 nm, short of the main polymer bands. The design uses discrete LEDs and an InGaAs photodiode instead, following the open Plastic Scanner project (decided by Amish, 2026-09-25).
 
-At TRL 3 the calculations (WSC-CAL-001 v0.4) show the constructable design meets seven of fourteen requirements on paper. The mass requirement (R6, 250 g) is not met since the parts needed to build it were added: about 238 g, 258 g with the cap (8 g over) after the 2.0 mm shell walls decided on 2026-10-02. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (R7), resin accuracy near 1,700 nm (R1) and the shared record with WasteWise-ml (R13) are at risk.
+At TRL 3 the calculations (WSC-CAL-001 v0.5) and the product requirements (WSC-PRS-001) show the constructable design meets 8 of 17 requirements on paper or by design. The mass requirement (PR-006, 250 g) is not met: about 239 g, 259 g with the cap (9 g over). The STEM check and its independent review led to three fixes made under Amish's standing instruction of 2026-10-23: a baffle tube through the glass with a separate detector window, so LED light reflected in the window cannot reach the detector; a scan of four averaged cycles (0.64 s); and a stronger cell strap. Following decisions Amish accepted on 2026-09-25 (WSC-DDR-003), clear items in sun are backed with the black calibration cap and the scanner refuses a result when it detects light through an unbacked item, and a clip-on hood shades the screen. Screen legibility in direct sun (PR-007), resin accuracy near 1,700 nm (PR-001) and the shared record with WasteWise-ml (PR-013) are at risk.
+
+![WasteWise Scan concept: shaded view with a hand for scale](media/hero.png)
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
+
+## STEM check
+
+Thirty claims are checked across physics, chemistry, biology, mathematics and engineering ([WSC-STM-001](docs/01b-stem-check.md)): for the current design, 12 are within known science and 11 are plausible, resting on assumed inputs (light leaks, ambient change, crush distance, LED drift) or needing a labelled item set; none fails. Four details failed along the way and were fixed under Amish's standing instruction: window crosstalk (baffle through the glass), the dark-reading gap (four averaged cycles), the cell strap at the peak drop load (11 x 10 mm strap) and, in option B, lamp heat next to PETG (aluminium sleeves). The check stays open until the TRL 4 measurements are made.
+
+## Concept options
+
+![Two ways to read a plastic's near-infrared signature, side by side at one scale](media/options.png)
+
+Option A, the current eight-band LED scanner, scores 186 of 235; option B, a tunable-filter spectrometer with tungsten lamps and a MEMS Fabry-Perot sensor sweeping 1,550 to 1,850 nm, scores 173 ([WSC-OPT-001](docs/02a-concept-options.md)). A is cheaper (USD 167.50 against at least USD 375), faster and tougher; B reads the PE and PP bands that A only reaches at their edge. They are within 10 %, so both go to Amish without a pick; the repo keeps option A until he decides. Both are modelled in detail (D3) in `cad/src/model.py`.
 
 ## Key components
 
@@ -72,7 +84,7 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Printed rugged housing with black TPU light shroud
 - Black calibration cap with white PTFE reference, also used to back clear items in sun
 - Clip-on sun hood over the display
-- Printed display frame, cell strap and optical head block; foam gasket and M3 screws into brass inserts
+- Printed display frame, cell strap and carbon-black optical head block whose baffle tube passes through the LED window; foam gasket and M3 screws into brass inserts
 
 Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target), from the priced bill of materials ([bom/bom.csv](bom/bom.csv)).
 
@@ -90,9 +102,9 @@ The [prototype build plan](docs/05-build-plan.md) (WSC-BLD-001) shows how to mak
 
 | Folder | Contents |
 | --- | --- |
-| `docs/` | Problem, concept, requirements, calculations and design decisions |
-| `cad/src/` | build123d Python source, the source of truth for all geometry |
-| `cad/step/`, `cad/stl/` | Exported models for FreeCAD, other CAD tools and printing |
+| `docs/` | Problem, STEM check, concept and options, requirements and traceability, calculations, build plan, decisions, regulatory, feasibility, risk, market and plan |
+| `cad/src/` | build123d Python source, the source of truth for all geometry (`model.py`: both options at D3; `product_model.py`: renders) |
+| `cad/step/`, `cad/stl/` | Exported models for FreeCAD, other CAD tools and printing; `cad/step/A/` per part, `A-assembly.step` and `B-assembly.step` per option |
 | `cad/drawings/` | 2D sketches and dimensioned drawings |
 | `bom/` | Bill of materials |
 | `electronics/` | KiCad schematics and PCB layouts |
@@ -102,7 +114,7 @@ The [prototype build plan](docs/05-build-plan.md) (WSC-BLD-001) shows how to mak
 
 ## Documentation
 
-Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (WSC-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `WSC-PRC-001/v1.0`.
+Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (WSC-PRC-001 for the precis), a version and a revision history. The pipeline documents are the STEM check, concept options, user and product requirements, the generated traceability matrix, and the [regulatory](docs/07-regulatory.md), [feasibility](docs/08-feasibility.md), [risk](docs/09-risk.md), [market](docs/10-market.md) and [plan](docs/11-plan.md) documents. Run `python .kit/render.py --check` to validate them, `python .kit/cad_check.py --export` for the CAD fidelity check, `python docs/04-calcs/sizing.py` for the calculations and `python docs/04-calcs/stem_check.py` for the STEM check. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `WSC-PRC-001/v1.0`.
 
 ## Credits
 

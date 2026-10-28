@@ -37,8 +37,15 @@ PARAMS = {
     "insert_d": 4.0,          # hole for an M3 heat-set insert
     # scan head (optical axis)
     "head_x": 55.0,           # optical axis position along the body
-    "window_d": 25.0,         # borosilicate window diameter
+    "window_d": 25.0,         # borosilicate LED window, outside diameter
     "window_t": 2.0,          # window thickness
+    # fix F1 (2026-10-24, WSC-DEC-001): baffle extended through the glass, so LED light reflected by the
+    # window's item-side surface cannot reach the detector (STEM check S12, WSC-CAL-001 C8)
+    "win_hole_d": 8.4,        # core-drilled hole through the centre of the LED window
+    "det_win_d": 5.8,         # separate detector window in the end of the baffle tube
+    "tube_od": 8.0,           # baffle tube of the head block, down through the hole to the glass face
+    "tube_bore": 6.0,         # bore in the end of the tube that takes the detector window
+    "led_chan_d": 4.0,        # light channel from each LED face down through the head block to the window
     "shroud_h": 18.0,         # shroud depth below the body
     "shroud_rim_d": 42.0,     # outer diameter at the rim (item side)
     "shroud_top_d": 30.0,     # outer diameter at the body
@@ -51,7 +58,7 @@ PARAMS = {
     "pd_can_d": 5.4,          # photodiode TO-46 can diameter (1 mm active area)
     "pd_can_h": 4.0,
     "pd_z": 4.0,              # underside of the photodiode can (detector plane)
-    "baffle_od": 7.0,         # baffle tube under the photodiode, down onto the window
+    "baffle_od": 7.0,         # (kit 1.7 baffle; replaced by tube_od under fix F1, kept for old scripts)
     "baffle_id": 4.0,
     "led_n": 8,               # number of LED bands
     "led_can_d": 5.4,         # TO-46 SWIR LED can diameter (some bands are 5 mm T-1 3/4)
@@ -88,8 +95,9 @@ PARAMS = {
     "cradle_end_t": 3.0,      # cradle end walls that carry the contacts (side rails 1.5 mm)
     "spring_l": 4.0,          # spring contact, compressed length
     "strap_x": -54.0,         # cell strap across the cell, outside the display board
-    "strap_w": 10.0,
-    "strap_t": 8.0,
+    "strap_w": 11.0,          # fix F3 (2026-10-24): 11 x 10 mm, was 10 x 8 mm (peak drop load, WSC-CAL-001 J4)
+    "strap_t": 10.0,
+    "strap_cbore": 2.0,       # fix F3: screw heads sit in 6.2 mm counterbores 2 mm deep, so the head clears the ceiling
     "usb_x": -76.0,           # USB-C socket at the tail wall
     "switch_x": -50.0,        # slide power switch in the right-hand side wall (-Y)
     "switch_z": 9.0,
@@ -285,10 +293,11 @@ def build_components(P=PARAMS):
     out["cell_contacts"] = contacts
     ctop = P["cell_z"] + P["cell_d"] / 2
     syy = D["strap_y"]
-    strap = Pos(P["strap_x"], 0, ctop + P["strap_t"] / 2) * Box(P["strap_w"], 2 * syy + 4.0, P["strap_t"])
+    strap = Pos(P["strap_x"], 0, ctop + P["strap_t"] / 2) * Box(P["strap_w"], 2 * syy + 7.0, P["strap_t"])
     for s in (1, -1):
         strap += Pos(P["strap_x"], s * syy, (t + 4.0 + ctop) / 2) * Box(P["strap_w"], 4.0, ctop - t - 4.0)
         strap -= _cyl(P["strap_x"], s * syy, t + 3.9, ctop + P["strap_t"] + 0.1, 3.4)
+        strap -= _cyl(P["strap_x"], s * syy, ctop + P["strap_t"] - P["strap_cbore"], ctop + P["strap_t"] + 0.1, 6.2)
     out["cell_strap"] = strap
     # USB-C board on its seat, socket mouth in the tail wall opening
     usb = Pos(-72.15, 0, 5.6) * Box(10.3, 12.0, 1.6)
@@ -304,7 +313,10 @@ def build_components(P=PARAMS):
     out["switch"] = swp
 
     # ---------------------------------------------------------------- optics
-    out["window"] = Pos(hx, 0, P["window_t"] / 2) * Cylinder(P["window_d"] / 2, P["window_t"])
+    # fix F1: an annular LED window and a separate detector window in the end of the baffle tube
+    led_win = _cyl(hx, 0, 0.0, P["window_t"], P["window_d"]) - _cyl(hx, 0, -0.1, P["window_t"] + 0.1, P["win_hole_d"])
+    det_win = _cyl(hx, 0, 0.0, P["window_t"], P["det_win_d"])
+    out["window"] = led_win + det_win
     ro, rt, sh, sw_ = P["shroud_rim_d"] / 2, P["shroud_top_d"] / 2, P["shroud_h"], P["shroud_wall"]
     shroud = Pos(hx, 0, -sh / 2) * (Cone(ro, rt, sh) - Cone(ro - sw_, rt - sw_, sh + 0.02))
     flange = _cyl(hx, 0, -P["flange_t"], 0.0, P["flange_d"]) - _cyl(hx, 0, -P["flange_t"] - 0.1, 0.1, P["flange_id"])
@@ -321,8 +333,9 @@ def build_components(P=PARAMS):
         holder += Pos(hx + (P["head_screw_r"] - 3.0) * cos(a), (P["head_screw_r"] - 3.0) * sin(a), (hz0 + hz1) / 2) * \
             Rot(0, 0, degrees(a)) * Box(6.0, 7.0, hz1 - hz0)
         holder -= _cyl(x, y, hz0 - 0.1, hz0 + 6.0, P["insert_d"])
-    holder += _cyl(hx, 0, P["window_t"], hz0 + 0.01, P["baffle_od"])          # baffle tube down onto the glass
-    holder -= _cyl(hx, 0, P["window_t"] - 0.1, P["pd_z"], P["baffle_id"])      # aperture under the photodiode
+    holder += _cyl(hx, 0, 0.0, hz0 + 0.01, P["tube_od"])                     # fix F1: baffle tube down through the glass
+    holder -= _cyl(hx, 0, -0.1, P["window_t"], P["tube_bore"])                # bore for the detector window
+    holder -= _cyl(hx, 0, P["window_t"] - 0.01, P["pd_z"], P["baffle_id"])    # aperture under the photodiode
     holder -= _cyl(hx, 0, P["pd_z"], hz1 + 0.1, P["holder_id"])                # bore for the photodiode can
     ax_, ay_ = P["afe_screw"]
     for s in (1, -1):
@@ -333,6 +346,7 @@ def build_components(P=PARAMS):
         place = Pos(hx, 0, P["led_z"]) * Rot(0, 0, a) * Pos(P["led_ring_r"], 0, 0) * Rot(0, D["led_tilt_deg"], 0)
         led = place * Cylinder(P["led_can_d"] / 2, P["led_can_h"])
         holder -= place * Pos(0, 0, 4.0) * Cylinder(P["led_can_d"] / 2 + 0.1, P["led_can_h"] + 8.0)
+        holder -= place * Pos(0, 0, -P["led_can_h"] / 2 - 3.0 + 0.01) * Cylinder(P["led_chan_d"] / 2, 6.0)   # light channel to the window
         leds = led if leds is None else leds + led
     out["led_holder"] = holder
     out["leds"] = leds
@@ -359,7 +373,7 @@ def build_components(P=PARAMS):
     out["head_screws"] = _fuse(hs)
     out["frame_screws"] = _fuse([_screw(fx, s * fy, P["frame_z0"], 5.5, 2.0, 8.0, 3.0)
                                  for fx, fy in P["frame_screws"] for s in (1, -1)])
-    out["strap_screws"] = _fuse([_screw(P["strap_x"], s * syy, ctop + P["strap_t"], 5.5, 1.8, 25.0, 3.0, up=False)
+    out["strap_screws"] = _fuse([_screw(P["strap_x"], s * syy, ctop + P["strap_t"] - P["strap_cbore"], 5.5, 1.8, 25.0, 3.0, up=False)
                                  for s in (1, -1)])
     out["afe_screws"] = _fuse([_screw(hx + ax_, s * ay_, hz1 + P["afe_t"], 4.5, 1.7, 6.0, 2.5, up=False) for s in (1, -1)])
     swf = []
@@ -402,6 +416,291 @@ def scanner(P=PARAMS):
 def assembly(P=PARAMS):
     from build123d import Compound
     return Compound(children=list(parts(P).values()) + list(cap_parts(P, at=(-20.0, -85.0, -P["shroud_h"])).values()))
+
+
+# ------------------------------------------------------------------ kit 1.9 interface (STANDARDS section 24)
+# OPTIONS, PRINCIPLES, CHOSEN, OPTION_VIEWS and components(option), each part a cad_parts.part() dict at
+# detail level D3. Option A is the design above (build_components) with every bought part, screw, washer,
+# nut and heat-set insert as its own solid; option B (WSC-OPT-001) shares the body and swaps the optical head.
+sys.path[:0] = [str(Path(__file__).resolve().parent), str(Path(__file__).resolve().parents[2] / ".kit")]
+
+TITLE = "WasteWise Scan"
+OPTIONS = {"A": "Eight-band LED scanner", "B": "Tunable-filter spectrometer"}
+PRINCIPLES = {
+    "A": "Eight NIR and SWIR LEDs from 850 to 1,650 nm flash in turn on the item and one InGaAs photodiode "
+         "reads each reflection; a classifier on the band ratios names the resin.",
+    "B": "Two small tungsten lamps light the item with a broad spectrum and a MEMS Fabry-Perot tunable filter "
+         "on an InGaAs detector sweeps 1,550 to 1,850 nm, reading a continuous spectrum across the polymer bands.",
+}
+CHOSEN = "A"
+OPTION_VIEWS = {k: {"el": 24, "az": -50, "scale": "none", "keep_context": True} for k in OPTIONS}
+ALLOWED_CONTACTS = []
+
+# option B overrides (WSC-OPT-001): taller head block for the TO-5 sensor, driver board above it
+PARAMS_B = dict(PARAMS, afe_z=13.5, fpi_flange_d=9.2, fpi_body_d=8.2, fpi_h=6.5, fpi_z=4.5,
+                lamp_r=11.0, lamp_z=3.0, lamp_bulb_d=5.0, lamp_bulb_l=9.0)
+
+_CACHE = {}
+
+
+def _built(key, P):
+    if key not in _CACHE:
+        _CACHE[key] = build_components(P)
+    return _CACHE[key]
+
+
+def _parts_lib():
+    import cad_parts as cp
+    import wws_parts as wp
+    return cp, wp
+
+
+def _common(P, C, bom):
+    """Body, display, power and fixings shared by both options (positions from build_components)."""
+    cp, wp = _parts_lib()
+    from build123d import Pos, Rot, RegularPolygon, extrude
+    D = derived(P)
+    hx, t = P["head_x"], P["wall"]
+    sx, sy = P["shell_screw_xy"]
+    corners = [(a * sx, b * sy) for a in (1, -1) for b in (1, -1)]
+    b = (lambda n: n) if bom else (lambda n: None)
+    out = []
+
+    def add(name, shape, mat, kind="made", bomn=None, group="shell", explode=(0, 0, 0), color=None):
+        out.append(cp.part(name, shape, mat, kind=kind, bom=bomn, group=group, explode=explode, color=color))
+
+    # made parts (PETG unless noted); kit MATERIALS has no PETG, TPU or PTFE: HDPE density stands in (REVIEW)
+    add("Top shell", C["top_shell"], "hdpe_natural", bomn=b(1), explode=(0, 0, 95), color="#E5E7EB")
+    add("Bottom shell and grip", C["bottom_shell"], "hdpe_natural", bomn=b(10), color="#9CA3AF")
+    add("Shell gasket (EPDM foam)", C["gasket"], "epdm", kind="bought", bomn=b(19), explode=(0, 0, 40))
+    add("Clip-on sun hood", C["sun_hood"], "hdpe_natural", bomn=b(14), explode=(0, 0, 130), color="#475569")
+    add("Display frame", C["display_frame"], "hdpe_natural", bomn=b(17), group="internal", explode=(0, 0, 70), color="#0E7490")
+    add("Cell strap", C["cell_strap"], "hdpe_natural", bomn=b(18), group="internal", explode=(0, 0, 48), color="#B45309")
+    add("Light shroud (TPU)", C["shroud"], "epdm", bomn=b(7), explode=(0, 0, -60))
+    # windows (fix F1): annular LED window and detector window, borosilicate, edges broken
+    led_win = _cyl(hx, 0, 0.0, P["window_t"], P["window_d"]) - _cyl(hx, 0, -0.1, P["window_t"] + 0.1, P["win_hole_d"])
+    add("LED window (borosilicate ring)", wp.eased(led_win, 0.2), "glass", kind="bought", bomn=b(6), explode=(0, 0, -30))
+    add("Detector window (borosilicate)", wp.eased(_cyl(hx, 0, 0.0, P["window_t"], P["det_win_d"]), 0.2), "glass",
+        kind="bought", bomn=b(6), explode=(0, 0, -36))
+
+    # display board (T-Display-S3 class), envelope from PARAMS, modelled as its main parts
+    bx, bz0 = P["board_x"], P["board_z"] - P["board_h"] / 2
+    bl, bw = P["board_l"], P["board_w"]
+    ex = (0, 0, 62)
+    add("Display board PCB", Pos(bx, 0, bz0) * wp.pcb(bl, bw, 1.2, holes=[(s1 * 28.0, s2 * 10.5, 2.2) for s1 in (1, -1) for s2 in (1, -1)]),
+        "hdpe_recycled", kind="bought", bomn=b(2), group="internal", explode=ex, color="#1A1D21")
+    add("ESP32-S3 module", Pos(bx - 5, 0, bz0 + 1.2) * wp.smd_box(18.0, 20.0, 2.3), "stainless", kind="bought", bomn=b(2), group="internal", explode=ex)
+    disp = wp.eased(Pos(bx + 1, 0, bz0 + 3.5 + 2.65) * __import__("build123d").Box(48.0, 25.0, 5.3), 0.3)
+    add("IPS display module", disp, "matte_black", kind="bought", bomn=b(2), group="internal", explode=ex)
+    glass = wp.eased(Pos(bx + 1, 0, bz0 + 8.8 + 0.35) * __import__("build123d").Box(48.0, 25.0, 0.7), 0.15)
+    add("Display cover glass", glass, "glass", kind="bought", bomn=b(2), group="internal", explode=ex)
+    add("USB-C receptacle on the display board", Pos(bx - bl / 2 + 3.7, 0, bz0 + 1.2 + 1.63) * Rot(0, 0, 180) * wp.usb_c_receptacle(),
+        "stainless", kind="bought", bomn=b(2), group="internal", explode=ex)
+    for s in (1, -1):
+        add("Display board button", Pos(bx + 25, s * 9.0, bz0 + 1.2) * wp.smd_box(3.0, 4.0, 1.5), "matte_black", kind="bought",
+            bomn=b(2), group="internal", explode=ex)
+
+    # power: cell, contacts, USB-C power board, switch
+    xc0 = D["cav_x0"]
+    add("18650 Li-ion cell, protected", Pos(P["cell_x"], 0, P["cell_z"]) * wp.cell_18650(P["cell_d"], P["cell_l"]),
+        "aluminium", kind="bought", bomn=b(8), group="internal", explode=(0, 0, 32), color="#1E40AF")
+    add("Cell contact, negative plate", Pos(xc0, 0, P["cell_z"]) * wp.contact_plate(), "stainless", kind="bought", bomn=b(9), group="internal", explode=(0, 0, 18))
+    add("Cell contact spring", Pos(xc0 + 1.0, 0, P["cell_z"]) * wp.spring_contact(5.0, 1.0, P["spring_l"]), "stainless", kind="bought",
+        bomn=b(9), group="internal", explode=(0, 0, 18))
+    add("Cell contact, positive plate", Pos(xc0 + D["cav_l"] - 1.0, 0, P["cell_z"]) * wp.contact_plate(), "stainless", kind="bought",
+        bomn=b(9), group="internal", explode=(0, 0, 18))
+    add("USB-C power board PCB", Pos(-72.15, 0, 4.8) * wp.pcb(10.3, 12.0, 1.6), "hdpe_recycled", kind="bought", bomn=b(9),
+        group="internal", explode=(0, 0, 18), color="#1D4ED8")
+    add("USB-C power receptacle", Pos(-P["body_l"] / 2 + 3.7, 0, 8.0) * Rot(0, 0, 180) * wp.usb_c_receptacle(), "stainless",
+        kind="bought", bomn=b(9), group="internal", explode=(0, 0, 18))
+    add("Slide power switch", C["switch"], "matte_black", kind="bought", bomn=b(11), group="internal", explode=(0, -20, 0))
+
+    # scan button: bezel, cap and threaded body; hexagonal panel nut under the ceiling
+    bxn, ceil = P["button_x"], D["ceiling"]
+    btn = _cyl(bxn, 0, P["body_h"], P["body_h"] + 2.0, P["button_bezel_d"]) + \
+        _cyl(bxn, 0, P["body_h"] + 2.0, P["body_h"] + P["button_h"], 12.0) + _cyl(bxn, 0, 20.0, P["body_h"], P["button_d"])
+    add("Sealed 16 mm scan button", btn, "hdpe_natural", kind="bought", bomn=b(11), explode=(0, 0, 128), color="#F59E0B")
+    nut = Pos(bxn, 0, ceil - 3.0) * (extrude(RegularPolygon(10.0, 6), 3.0) - Pos(0, 0, 1.5) * __import__("build123d").Cylinder(8.1, 3.2))
+    add("Button panel nut M16", nut, "zinc_plated", kind="fastener", bomn=b(11), group="internal", explode=(0, 0, 110))
+
+    # fixings: every screw, washer, nut and heat-set insert (BOM line 16)
+    F = lambda name, shape, mat="zinc_plated", ex=(0, 0, 0), grp="internal": add(name, shape, mat, kind="fastener", bomn=b(16), group=grp, explode=ex)
+    for x, y in corners:
+        F("M3x20 pan head screw (shell)", Pos(x, y, 3.2) * Rot(180, 0, 0) * wp.pan_screw(3.0, 20.0), ex=(0, 0, -95), grp="shell")
+        F("M3 heat-set insert (shell boss)", Pos(x, y, 16.7) * wp.heat_set_insert(4.0, 5.7, 3.0), "brass", ex=(0, 0, 95))
+    fl = -P["flange_t"]
+    for x, y in D["head_screws"]:
+        F("M3 washer (shroud flange)", Pos(x, y, fl - 0.5) * wp.washer_small(3.0), ex=(0, 0, -80), grp="shell")
+        F("M3x10 pan head screw (shroud and head block)", Pos(x, y, fl - 0.5) * Rot(180, 0, 0) * wp.pan_screw(3.0, 10.0), ex=(0, 0, -90), grp="shell")
+        F("M3 heat-set insert (head block lug)", Pos(x, y, D["holder_z0"] + 0.05) * wp.heat_set_insert(4.0, 5.7, 3.0), "brass", ex=(0, 0, 22))
+    for fx, fy in P["frame_screws"]:
+        for s in (1, -1):
+            F("M3x8 pan head screw (display frame)", Pos(fx, s * fy, P["frame_z0"]) * Rot(180, 0, 0) * wp.pan_screw(3.0, 8.0), ex=(0, 0, 70))
+            F("M3 heat-set insert (frame boss)", Pos(fx, s * fy, P["frame_z0"] + 2.6) * wp.heat_set_insert(4.0, 5.7, 3.0), "brass", ex=(0, 0, 95))
+    ctop = P["cell_z"] + P["cell_d"] / 2
+    for s in (1, -1):
+        F("M3x25 low head screw (cell strap)", Pos(P["strap_x"], s * D["strap_y"], ctop + P["strap_t"] - P["strap_cbore"]) * wp.pan_screw(3.0, 25.0, 5.5, 1.8), ex=(0, 0, 60))
+        F("M3 heat-set insert (strap boss)", Pos(P["strap_x"], s * D["strap_y"], t + 0.05) * wp.heat_set_insert(4.0, 3.9, 3.0), "brass")
+    ywall = -P["body_w"] / 2
+    for dx in (-7.5, 7.5):
+        xx = P["switch_x"] + dx
+        F("M2x6 pan head screw (switch)", Pos(xx, ywall, P["switch_z"]) * Rot(90, 0, 0) * wp.pan_screw(2.0, 6.0), ex=(0, -20, 0), grp="shell")
+        F("M2 hex nut (switch)", Pos(xx, ywall + t + 0.6, P["switch_z"]) * Rot(-90, 0, 0) * wp.hex_nut_small(2.0), ex=(0, -20, 0))
+    return out
+
+
+def _afe_screws(P, bom):
+    cp, wp = _parts_lib()
+    from build123d import Pos
+    D = derived(P)
+    hx, (ax_, ay_) = P["head_x"], P["afe_screw"]
+    hz1 = D["holder_z1"]
+    out = []
+    for s in (1, -1):
+        out.append(cp.part("M2.5x6 pan head screw (board)", Pos(hx + ax_, s * ay_, hz1 + P["afe_t"]) * wp.pan_screw(2.5, 6.0), "zinc_plated",
+                           kind="fastener", bom=16 if bom else None, group="internal", explode=(0, 0, 70)))
+        out.append(cp.part("M2.5 heat-set insert (head block)", Pos(hx + ax_, s * ay_, hz1 - 4.1) * wp.heat_set_insert(3.5, 4.0, 2.5), "brass",
+                           kind="fastener", bom=16 if bom else None, group="internal", explode=(0, 0, 40)))
+    return out
+
+
+def _board(P, extra_holes, parts, bom, bomn, name):
+    """Amplifier or driver board: perfboard square on the head block with its parts on top."""
+    cp, wp = _parts_lib()
+    from build123d import Pos
+    D = derived(P)
+    hx, (ax_, ay_), w = P["head_x"], P["afe_screw"], P["afe_w"]
+    z = D["holder_z1"]
+    holes = [(ax_, s * ay_, 2.8) for s in (1, -1)] + extra_holes
+    out = [cp.part(name, Pos(hx, 0, z) * wp.pcb(w, w, P["afe_t"], holes=holes, r=1.0), "hdpe_recycled", kind="bought",
+                   bom=bomn if bom else None, group="internal", explode=(0, 0, 60), color="#166534")]
+    zt = z + P["afe_t"]
+    for pname, shape, (x, y), mat in parts:
+        out.append(cp.part(pname, Pos(hx + x, y, zt) * shape, mat, kind="bought", bom=bomn if bom else None, group="internal", explode=(0, 0, 60)))
+    return out
+
+
+def _option_a(bom=True):
+    cp, wp = _parts_lib()
+    from build123d import Pos, Rot
+    P = PARAMS
+    C = _built("A", P)
+    D = derived(P)
+    hx = P["head_x"]
+    out = _common(P, C, bom)
+    b = (lambda n: n) if bom else (lambda n: None)
+    out.append(cp.part("Optical head block (black PETG)", C["led_holder"], "matte_black", bom=b(3), group="internal", explode=(0, 0, 22)))
+    for k in range(P["led_n"]):
+        a = 360.0 * k / P["led_n"] + 22.5
+        place = Pos(hx, 0, P["led_z"]) * Rot(0, 0, a) * Pos(P["led_ring_r"], 0, 0) * Rot(0, D["led_tilt_deg"], 0)
+        led = place * Pos(0, 0, -P["led_can_h"] / 2) * wp.to_can(P["led_can_d"], 4.7, P["led_can_h"], window_d=2.5, lead_l=1.5)
+        nm = [850, 940, 1050, 1200, 1300, 1450, 1550, 1650][k]
+        out.append(cp.part(f"LED {nm} nm (TO-46)", led, "stainless", kind="bought", bom=b(3), group="internal", explode=(0, 0, 40)))
+    out.append(cp.part("InGaAs photodiode (TO-46)", Pos(hx, 0, P["pd_z"]) * wp.to_can(P["pd_can_d"], 4.7, P["pd_can_h"], window_d=2.0, lead_l=4.0),
+                       "stainless", kind="bought", bom=b(4), group="internal", explode=(0, 0, 48)))
+    import math
+    lead_holes = [(1.27 * math.cos(math.radians(90 + i * 120)), 1.27 * math.sin(math.radians(90 + i * 120)), 0.9) for i in range(3)]
+    parts = [("Transimpedance op-amp (SOIC-8)", wp.ic(4.9, 3.9, 1.5, 4, 1.27), (-7.0, 7.0), "matte_black"),
+             ("24-bit ADC (TSSOP-16)", wp.ic(5.0, 4.4, 1.0, 8, 0.6), (-7.0, -7.0), "matte_black"),
+             ("Wire header, 6 pins", wp.header(6, body_h=2.5, pin_up=3.0), (-12.0, 0.0), "matte_black")]
+    parts += [(f"LED switch MOSFET {i + 1}", wp.smd_box(2.9, 1.3, 1.0), (5.0, -8.75 + 2.5 * i), "matte_black") for i in range(8)]
+    out += _board(P, lead_holes, parts, bom, 5, "Amplifier and ADC board (perfboard)")
+    out += _afe_screws(P, bom)
+    # calibration cap and PTFE disc, stored beside the scanner (as in the assembly STEP)
+    cps = cap_parts(P, at=(-20.0, -85.0, -P["shroud_h"]))
+    out.append(cp.part("Calibration cap (black PETG)", cps["cal_cap"], "matte_black", bom=b(12), group="accessory", explode=(0, -40, 0)))
+    out.append(cp.part("White PTFE reference disc", wp.eased(cps["ptfe_disc"], 0.3), "hdpe_natural", kind="bought", bom=b(13),
+                       group="accessory", explode=(0, -40, 30), color="#F9FAFB"))
+    return out
+
+
+def _head_b(P):
+    """Option B optical head block: lugs, baffle tube through the glass, bore for the TO-5 sensor, two lamp pockets."""
+    from build123d import Pos, Rot, Box, Cylinder
+    from math import atan2, cos, degrees, sin
+    D = derived(P)
+    hx = P["head_x"]
+    hz0, hz1 = D["holder_z0"], D["holder_z1"]
+    h = _cyl(hx, 0, hz0, hz1, P["holder_od"])
+    for x, y in D["head_screws"]:
+        a = atan2(y, x - hx)
+        h += _cyl(x, y, hz0, hz1, 7.0)
+        h += Pos(hx + (P["head_screw_r"] - 3.0) * cos(a), (P["head_screw_r"] - 3.0) * sin(a), (hz0 + hz1) / 2) * Rot(0, 0, degrees(a)) * Box(6.0, 7.0, hz1 - hz0)
+        h -= _cyl(x, y, hz0 - 0.1, hz0 + 6.0, P["insert_d"])
+    h += _cyl(hx, 0, 0.0, hz0 + 0.01, P["tube_od"])
+    h -= _cyl(hx, 0, -0.1, P["window_t"], P["tube_bore"])
+    h -= _cyl(hx, 0, P["window_t"] - 0.01, P["fpi_z"], P["baffle_id"])
+    h -= _cyl(hx, 0, P["fpi_z"], hz1 + 0.1, P["fpi_flange_d"] + 0.2)
+    ax_, ay_ = P["afe_screw"]
+    for s in (1, -1):
+        h -= _cyl(hx + ax_, s * ay_, hz1 - 5.0, hz1 + 0.1, 3.5)
+    tilt = degrees(atan2(P["lamp_r"], P["lamp_z"] + P["shroud_h"]))
+    places = []
+    for a in (0.0, 180.0):
+        place = Pos(hx, 0, P["lamp_z"]) * Rot(0, 0, a) * Pos(P["lamp_r"], 0, 0) * Rot(0, tilt, 0)
+        h -= place * Pos(0, 0, 10.0) * Cylinder(P["lamp_bulb_d"] / 2 + 1.2, 20.2)   # fix F4: room for an aluminium sleeve
+        h -= place * Pos(0, 0, -3.0) * Cylinder(2.0, 6.0)
+        places.append(place)
+    return h, places
+
+
+def _option_b():
+    cp, wp = _parts_lib()
+    from build123d import Pos
+    import math
+    P = PARAMS_B
+    C = _built("B", P)
+    hx = P["head_x"]
+    out = _common(P, C, bom=False)
+    head, places = _head_b(P)
+    out.append(cp.part("Optical head block B (black PETG)", head, "matte_black", group="internal", explode=(0, 0, 22)))
+    from build123d import Sketch, Circle, extrude
+    for i, pl in enumerate(places):
+        out.append(cp.part(f"Tungsten lamp {i + 1} (T-1 3/4)", pl * wp.mini_lamp(P["lamp_bulb_d"], P["lamp_bulb_l"], 6.0), "glass",
+                           kind="bought", group="internal", explode=(0, 0, 40)))
+        # fix F4 (independent review): an aluminium sleeve with a 0.2 mm air gap keeps the hot bulb off the PETG block
+        sleeve = extrude(Sketch() + Circle(P["lamp_bulb_d"] / 2 + 1.2) - Circle(P["lamp_bulb_d"] / 2 + 0.2), P["lamp_bulb_l"])
+        out.append(cp.part(f"Aluminium lamp sleeve {i + 1}", pl * wp.eased(sleeve, 0.2), "aluminium", group="internal", explode=(0, 0, 32)))
+    out.append(cp.part("MEMS-FPI spectrum sensor (TO-5 class)", Pos(hx, 0, P["fpi_z"]) * wp.to_can(P["fpi_flange_d"], P["fpi_body_d"], P["fpi_h"],
+                       window_d=3.0, leads=4, lead_l=4.0, lead_pcd=5.08), "stainless", kind="bought", group="internal", explode=(0, 0, 48)))
+    lead_holes = [(2.54 * math.cos(math.radians(90 + i * 90)), 2.54 * math.sin(math.radians(90 + i * 90)), 0.9) for i in range(4)]
+    parts = [("Boost inductor (filter tuning supply)", wp.smd_box(4.0, 4.0, 2.0), (-8.0, 7.0), "matte_black"),
+             ("Filter driver and DAC (TSSOP-16)", wp.ic(5.0, 4.4, 1.0, 8, 0.6), (-8.0, -7.0), "matte_black"),
+             ("Transimpedance op-amp (SOIC-8)", wp.ic(4.9, 3.9, 1.5, 4, 1.27), (6.0, 7.0), "matte_black"),
+             ("24-bit ADC (TSSOP-16)", wp.ic(5.0, 4.4, 1.0, 8, 0.6), (6.0, -7.0), "matte_black"),
+             ("Lamp switch MOSFET 1", wp.smd_box(2.9, 1.3, 1.0), (-1.0, 10.5), "matte_black"),
+             ("Lamp switch MOSFET 2", wp.smd_box(2.9, 1.3, 1.0), (-1.0, -10.5), "matte_black"),
+             ("Wire header, 6 pins", wp.header(6, body_h=2.5, pin_up=3.0), (-12.0, 0.0), "matte_black")]
+    out += _board(P, lead_holes, parts, False, None, "Filter driver and ADC board (perfboard)")
+    out += _afe_screws(P, False)
+    cps = cap_parts(P, at=(-20.0, -85.0, -P["shroud_h"]))
+    out.append(cp.part("Calibration cap (black PETG)", cps["cal_cap"], "matte_black", group="accessory"))
+    out.append(cp.part("White PTFE reference disc", wp.eased(cps["ptfe_disc"], 0.3), "hdpe_natural", kind="bought", group="accessory", color="#F9FAFB"))
+    return out
+
+
+def _hand():
+    """A relaxed right hand and forearm lying beside the scanner on the item surface, for scale only."""
+    cp, _ = _parts_lib()
+    import context_parts
+    from build123d import Pos, Rot
+    h = context_parts.forearm_hand("right", "flat")
+    return cp.part("Hand (scale)", Pos(-30.0, 105.0, -PARAMS["shroud_h"] + 43.8) * Rot(0, 0, 180) * h, "skin", kind="context", group="context")
+
+
+def components(option=CHOSEN):
+    """cad_parts.part() dicts for one concept option, in assembled position (D3, STANDARDS section 24)."""
+    if option == "A":
+        parts = _option_a(bom=True)
+    elif option == "B":
+        parts = _option_b()
+    else:
+        raise KeyError(option)
+    try:
+        parts.append(_hand())
+    except Exception as e:   # scale context only; never block the model
+        print("hand not added:", e)
+    return parts
 
 
 # ------------------------------------------------------------------ constructability checks
@@ -503,9 +802,9 @@ if __name__ == "__main__":
     export_step(assembly(), str(out / "step" / "wastewise-scan-assembly.step"))
     for name in ("top_shell", "bottom_shell", "shroud", "led_holder", "sun_hood", "display_frame", "cell_strap"):
         export_step(ps[name], str(out / "step" / f"wastewise-scan-{name.replace('_', '-')}.step"))
-        export_stl(ps[name], str(out / "stl" / f"wastewise-scan-{name.replace('_', '-')}.stl"), tolerance=0.05, angular_tolerance=0.3)
+        export_stl(ps[name], str(out / "stl" / f"wastewise-scan-{name.replace('_', '-')}.stl"), tolerance=0.15, angular_tolerance=0.3)
     export_step(cp["cal_cap"], str(out / "step" / "wastewise-scan-cal-cap.step"))
-    export_stl(cp["cal_cap"], str(out / "stl" / "wastewise-scan-cal-cap.stl"), tolerance=0.05, angular_tolerance=0.3)
+    export_stl(cp["cal_cap"], str(out / "stl" / "wastewise-scan-cal-cap.stl"), tolerance=0.15, angular_tolerance=0.3)
     D = derived()
     bb = scanner().bounding_box()
     print(f"scanner envelope {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm; "

@@ -22,7 +22,7 @@ from model import PARAMS as P, build_components, derived, cap_parts, cap_on_shro
 
 OUT = ROOT / "docs" / "05-build-plan"
 DWG = ROOT / "cad" / "drawings"
-DATE = "2026-10-02"
+DATE = "2026-10-24"
 D = derived(P)
 C = build_components(P)
 CAP = cap_on_shroud(P)
@@ -168,10 +168,12 @@ def sheets(only=None):
                    "Disc 36 mm across, 7.2 mm tall, with three lugs for the shroud screws",
                    "  on a 40 mm circle; press an M3 insert into each lug from below.",
                    "Eight LED pockets 5.6 mm on a 20 mm circle, each tilted 23 degrees",
-                   "  inward so the beams meet on the item; leads come out of the top.",
-                   "Centre bore 5.6 mm for the photodiode can, with a step 4 mm up the",
-                   "  body; below the step a 4 mm aperture and a baffle tube 7 mm across",
-                   "  that stands 0.5 mm proud of the underside and rests on the window.",
+                   "  inward so the beams meet on the item; a 4 mm light channel runs from",
+                   "  each LED face out through the underside; leads come out of the top.",
+                   "Centre bore 5.6 mm for the photodiode can, with a step 4 mm up; below",
+                   "  it a 4 mm aperture, then a baffle tube 8 mm across standing 2 mm below",
+                   "  the underside, through the window hole; its 6 mm end bore holds the",
+                   "  5.8 mm detector window flush with the glass face (fix F1).",
                    "Two 3.5 mm holes 12 mm each side for M2.5 inserts (amplifier board).",
                    "Ream the LED pockets and the bore with a 5.6 mm drill by hand.",
                    "Check: each LED can slides in and stops square; the bore is black inside."],
@@ -183,7 +185,7 @@ def sheets(only=None):
             view_shape=Pos(-HX, 0, P["shroud_h"]) * C["shroud"], inset_view=(-35, -60),
             notes=["Print in black TPU 95A, flange on the bed, slow (about 20 mm/s).",
                    "Flange 47 mm across and 2.5 mm thick, with a 22 mm hole; the lip of the",
-                   "  flange holds the window up into the body.",
+                   "  flange holds the LED window up into the body.",
                    "Cone 18 mm deep from the body: 30 mm across at the flange, 42 mm at the",
                    "  rim, 3 mm wall; 36 mm inside at the rim.",
                    "Three 3.4 mm holes on a 40 mm circle, at 90, 210 and 330 degrees",
@@ -214,14 +216,15 @@ def sheets(only=None):
             Part("Cell strap", C["cell_strap"], COL["strap"]), [M["bottom"], M["cell"]],
             dwg_no="WSC-DWG-106", title="WasteWise Scan cell strap: making sketch", material="PETG, 3D printed, 100 % infill",
             view_shape=Pos(-P["strap_x"], 0, -P["wall"] - 4.0) * C["cell_strap"], inset_view=(40, -60),
-            notes=["Print on its side (the 10 mm face on the bed), 100 % infill.",
-                   "A bridge 10 mm wide: top bar 33 x 8 mm, two legs 4 mm thick and",
-                   "  14.75 mm tall, 29 mm apart between centres.",
-                   "3.4 mm hole down through each leg and the bar.",
+            notes=["Print on its side (an 11 mm face on the bed), 100 % infill.",
+                   "A bridge 11 mm wide: top bar 36 x 10 mm, two legs 4 mm thick and",
+                   "  15.25 mm tall, 29 mm apart between centres (fix F3).",
+                   "3.4 mm hole down through each leg and the bar, with a 6.2 mm",
+                   "  counterbore 2 mm deep in the top for each screw head.",
                    "Fit: the bar lies on top of the cell, 46 mm from the cell's spring end;",
                    "  the legs stand on the two strap bosses beside the cradle.",
                    "Two M3 x 25 low-head screws down through the strap into the inserts.",
-                   "It holds the cell down in a drop: about 550 N at 1.3 times margin.",
+                   "It holds the cell down in a drop: 870 N peak at 1.45 times margin.",
                    "Check: the cell cannot lift and the screw heads are below 31 mm."],
             **base))
     if want(107):
@@ -316,7 +319,7 @@ def joints(only=None):
             part("M3 screw and washer into an insert", win(C["head_screws"], *b), "#64748B")],
             [(HX - 21, 0, 1.2), (HX - 14, 0, 6), (HX, 0, 6), (HX + 5, 0, 10.5), (HX + 8, 0, 1.0), (HX - 19, 0, -1.2), (HX - 17.3, -10, -4.5)],
             OUT / "joint-01.png", "Joint 1: the optical head, cut through the scan axis",
-            "The window is pinched between the shroud flange lip below and the baffle tube above",
+            "The LED window is pinched between the shroud flange lip and the head block; the baffle tube passes through it",
             elev=12, azim=72))
     if want(2):   # shell joint at a screw
         sx, sy = P["shell_screw_xy"]

@@ -3,9 +3,9 @@ doc_id: WSC-PRB-001
 title: WasteWise Scan problem statement
 project: WasteWise Scan
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-24'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Partner, region and price-target questions answered by Amish's decisions of 2026-10-02 (WSC-DEC-001)
+- version: "0.5"
+  date: '2026-10-24'
+  author: Amish Chadha
+  change: "Kit 1.8 upgrade: users-and-needs table (Table 1) and stakeholders table (Table 2) added for the user requirements WSC-URS-001"
 ---
 
 # WasteWise Scan problem statement
@@ -53,6 +57,31 @@ Industry solves this with near-infrared (NIR) spectroscopy. Polymers absorb shor
 | Cooperative or aggregator sorter | Check disputed items quickly; keep bales clean; train new members | Sorting shed or yard, hundreds to thousands of items per shift |
 | Small recycler or buyer | Spot-check incoming bales before paying; reject PVC in PET | Receiving bay |
 | Trainer, NGO or researcher | A shared, open reference for resin identification and a log of what is collected | Workshops, studies, WasteWise-ml data collection |
+
+### Users and needs
+
+Table 1. Users and needs (the source of the user requirements in WSC-URS-001).
+
+| User type | Goals and needs | Typical use scenario | Pain points and challenges |
+| --- | --- | --- | --- |
+| Waste picker | Put each item in the right pile and know what it is worth; keep earning while checking | Streets, dumpsites and transfer points; checks a doubtful clear tray or white bottle in about a second, one-handed, gloves on | Sun, dust and rain; no power at work; limited literacy for some; a wrong call costs money; black items cannot be read by any NIR device |
+| Cooperative or aggregator sorter | Keep bales clean, settle disputes quickly, train new members | Sorting shed or yard, hundreds to thousands of items per shift; a shared scanner at the bench | Look-alike pairs (PP and PET trays, HDPE and PP bottles); PVC in PET; shared device must survive daily handling |
+| Small recycler or buyer | Spot-check incoming bales before paying; reject PVC in PET | Receiving bay, a few scans per bale | Needs a result it can trust or an honest "unknown"; no time for training |
+| Trainer, NGO or researcher | An open reference for resin identification and a log of what is collected | Workshops and studies; WasteWise-ml data collection | Records must be exportable and consented; open design to adapt |
+
+### Stakeholders
+
+Table 2. Stakeholders.
+
+| Stakeholder group | Role or interest | Engagement needed |
+| --- | --- | --- |
+| Member-owned waste picker cooperative (first candidate SWaCH, Pune; decided 2026-10-02) | Co-design partner, owner of the shared scanner, sets the price grades | Co-design sessions, price table, labelled item set, consent terms for spectra |
+| Scrap buyers and recyclers in Pune | Set the grades and prices the cooperative is paid | Price lists by grade; which resins they reject |
+| WasteWise-ml project | Sibling phone app for items the spectrum cannot resolve | Adopt the shared scan record and QR pair ID (WSC-DDR-002) |
+| Municipality (Pune Municipal Corporation) and waste picker networks | Waste management rules; recognition and integration of pickers | Awareness; any rules on devices used at collection points |
+| Makers and makerspaces (Helpful Engineering network, local workshops) | Build and repair the scanner from the build plan | Build plan review; local parts sourcing |
+| Open-hardware prior work (Plastic Scanner) | Shared approach and possible shared data | Data-sharing where licences allow (WSC-DDR-001 D5) |
+| Parts suppliers (SWIR LEDs, InGaAs photodiodes, cells) | Availability and price of the critical parts | Quotes for single units and small batches |
 
 ## Constraints
 

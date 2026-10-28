@@ -3,9 +3,9 @@ doc_id: WSC-BLD-001
 title: WasteWise Scan prototype build plan
 project: WasteWise Scan
 doc_type: Build plan
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-24'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: Shell walls 2.0 mm (five perimeters); mass estimate 238 g and 258 g; pictures of the shells, display frame and sections regenerated
+  - version: "0.3"
+    date: '2026-10-24'
+    author: Amish Chadha
+    change: "Fixes F1 and F3 (WSC-DEC-001): cell strap 11 x 10 mm with counterbored screws; LED window with an 8.4 mm centre hole, separate 5.8 mm detector window held in the head block's baffle tube, which passes through the glass; a light channel from each LED face; mass estimate 239 g and 259 g; pictures regenerated from the kit 1.9 model"
 ---
 
 # WasteWise Scan prototype build plan
@@ -42,7 +46,7 @@ The concept showed what the scanner does; most of its parts had no fixing, and a
 | Component | The concept had | The buildable design has | Why |
 | --- | --- | --- | --- |
 | Shells | Two halves touching, with no screws, seal or location | Four screws from below into brass inserts; bosses that meet; a foam gasket on the rim; a tongue that lines up the halves (Figure 5) | The halves close square and sealed, and the gasket cannot be over-squeezed |
-| Window | A loose disc in a hole through the floor | Pinched between the shroud flange below and the baffle tube of the head block above (Figure 8) | One clamp holds the window, the shroud and the head block |
+| Window | A loose disc in a hole through the floor | An LED window ring pinched between the shroud flange below and the head block above, and a separate small detector window held in the end of the head block's baffle tube, which passes through the ring's centre hole (Figure 8) | One clamp holds the windows, the shroud and the head block; LED light reflected inside the glass can no longer reach the photodiode (fix F1, 2026-10-24) |
 | Light shroud | A cone touching the underside, not fixed | A flange with three screws into the head block (Figures 8 and 11) | Held firm, and replaceable when it wears |
 | LED holder and amplifier board | A ring floating above the floor, and a board floating above it | An optical head block from the floor to the board, which carries the LEDs, the photodiode and the board (Figure 7) | Every optical part is located by one printed part |
 | Cell holder | An open trough for an unprotected cell, with no contacts and nothing holding the cell | A cradle printed with the bottom shell, with contacts for a protected cell and a printed strap over the cell (Figure 15) | The cell stays put in a drop and the contacts have somewhere to sit |
@@ -50,6 +54,7 @@ The concept showed what the scanner does; most of its parts had no fixing, and a
 | Scan button | A hole too small for the button | A 16.2 mm hole for a panel-mount button, nut inside (Figure 6) | Standard fitting with its own seal |
 | USB-C socket and switch | Socket overlapping the tail wall; no switch in the model | A USB-C board on a printed seat; a slide switch in the right-hand wall (Figure 3) | Both are reachable and fixed |
 | Sun hood | Called clip-on, with nothing to clip to | Two clip legs that snap under ribs on the top shell sides (Figure 17) | No tools; the shading walls are unchanged |
+| Cell strap (2026-10-24) | A 10 x 8 mm bar | An 11 x 10 mm bar with the screw heads in counterbores (Figure 14) | Holds the cell at the peak of a drop, not only the mean load (fix F3) |
 | Calibration cap | Loose on the shroud, too deep for the rim to touch the white disc | A tighter bore that grips the rim, a shorter cap and a wider disc, so the rim rests on the disc (Figure 19) | The white reference is read at the same distance as an item |
 
 ## 3. Making the components
@@ -114,20 +119,21 @@ Make and check each component before the assembly step that needs it. Sizes are 
 
 *Figure 7. Optical head block making sketch (WSC-DWG-103).*
 
-**What it is and what it is made from.** The printed block that holds the eight LEDs at the right angle, holds the photodiode above the window, keeps stray light away from it, and carries the amplifier board. Black PETG, 100 % infill.
+**What it is and what it is made from.** The printed block that holds the eight LEDs at the right angle, holds the photodiode above the window, keeps stray light away from it, and carries the amplifier board. Black PETG coloured with carbon black, 100 % infill: the baffle tube must stop near-infrared light, and some black filaments use dyes that let it through. Hold a 1 mm printed sample over the scanner's photodiode with an LED on behind it; nothing should read above the dark level.
 
 **How to make it.**
 
 1. Print in black PETG with its top face on the bed, 0.1 mm layers, 100 % infill.
-2. Ream the eight LED pockets and the centre bore by hand with a 5.6 mm drill held in a pin vice.
-3. Press an M3 insert into each of the three lugs from the underside, and an M2.5 insert into each of the two holes on the top face nearest the head end.
-4. Push each LED can into its pocket from the top until it stops square (the pocket is a close fit), and the photodiode can into the centre bore until it sits on the step. Fit the bands in a fixed order round the ring and mark it on the block.
+2. Ream the eight LED pockets and the centre bore by hand with a 5.6 mm drill held in a pin vice, and clear the eight 4 mm light channels that run from the bottom of each pocket out through the underside.
+3. Glue the 5.8 mm detector window into the 6 mm bore in the end of the baffle tube, pushed up against the step, so its outer face is flush with the end of the tube. Use a thin bead of clear epoxy round the edge only; keep the centre of the glass clean.
+4. Press an M3 insert into each of the three lugs from the underside, and an M2.5 insert into each of the two holes on the top face nearest the head end.
+5. Push each LED can into its pocket from the top until it stops square (the pocket is a close fit), and the photodiode can into the centre bore until it sits on the step. Fit the bands in a fixed order round the ring and mark it on the block.
 
-**How it fits the parts next to it.** The block stands on the floor of the bottom shell with its three lugs over the three holes round the window. Its baffle tube stands 0.5 mm below its underside and rests on the window, so light from the LEDs cannot reach the photodiode through the glass without going out to the item first. The amplifier board sits on its top face:
+**How it fits the parts next to it.** The block stands on the floor of the bottom shell with its three lugs over the three holes round the window. Its baffle tube, 8 mm across, stands 2 mm below its underside and passes through the 8.4 mm hole in the centre of the LED window, so the detector window in its end lies flush with the outer face of the glass. Light from the LEDs leaves through the LED window ring; any of it that reflects inside the glass meets the black tube wall instead of the photodiode, so it cannot reach the photodiode without going out to the item first. The amplifier board sits on its top face:
 
 ![Figure 8. Joint 1: the optical head, cut through the scan axis](05-build-plan/joint-01.png)
 
-*Figure 8. Joint 1: the shroud flange lip holds the window up from below and the baffle tube holds it down from above; three screws through the flange and the floor pull the shroud, window and head block together.*
+*Figure 8. Joint 1: the shroud flange lip holds the LED window ring up from below and the head block holds it down from above; the baffle tube with the detector window passes through the ring's centre hole; three screws through the flange and the floor pull the shroud, window and head block together.*
 
 **Check before moving on.** Every can is seated square; the block stands on a flat surface without rocking; looking down the centre bore you see light only through the 4 mm aperture.
 
@@ -215,8 +221,8 @@ Leave every lead about 60 mm long so the two shells can lie side by side while y
 
 **How to make it.**
 
-1. Print on its side (the 10 mm face on the bed), 100 % infill, so the layers run along the bar.
-2. Clear the 3.4 mm hole down through each leg.
+1. Print on its side (an 11 mm face on the bed), 100 % infill, so the layers run along the bar. The bar is 36 mm long, 11 mm wide and 10 mm deep.
+2. Clear the 3.4 mm hole down through each leg, and the 6.2 mm counterbore, 2 mm deep, in the top of the bar over each leg.
 
 **How it fits the parts next to it.**
 
@@ -224,7 +230,7 @@ Leave every lead about 60 mm long so the two shells can lie side by side while y
 
 *Figure 15. Joint 3: the spring contact sits in the tail end wall of the cradle; the strap bar lies on the cell and its legs stand on the two bosses beside the cradle.*
 
-The bar lies on top of the cell near its tail end; two M3 x 25 low-head screws go down through the legs into the inserts in the floor bosses. Their heads stay below the top shell ceiling.
+The bar lies on top of the cell near its tail end; two M3 x 25 low-head screws go down through the legs into the inserts in the floor bosses. Their heads sit in the counterbores, below the top of the bar, so they clear the top shell ceiling.
 
 **Check before moving on.** With the strap screwed down, the cell cannot be lifted and does not rattle.
 
@@ -281,7 +287,7 @@ Buy to specification, not brand. Line numbers are those of the bill of materials
 - **LEDs (line 3).** One each at 850, 940, 1,050, 1,200, 1,300, 1,450, 1,550 and 1,650 nm, in TO-46 cans 5.4 mm across. A band available only as a 5 mm lens LED needs its pocket opened to suit its 5.8 mm rim.
 - **Photodiode (line 4).** InGaAs PIN, 1 mm active area, about 900 to 1,700 nm, TO-46 can.
 - **Amplifier parts (line 5).** Low-noise op-amp, 47 kΩ feedback resistor, 24-bit converter on a breakout (ADS1220 class), eight constant-current LED switches.
-- **Window (line 6).** Borosilicate disc 25 mm across, 2 mm thick, uncoated.
+- **Windows (line 6).** Borosilicate disc 25 mm across, 2 mm thick, uncoated, with an 8.4 mm hole cored through its centre: drill it wet with an 8 mm diamond core drill at low speed, the disc clamped on scrap wood, then deburr the edge with fine wet abrasive paper. A second borosilicate disc 5.8 mm across and 2 mm thick for the detector window (a stock size near 6 mm, or cored from the same sheet).
 - **Cell (line 8).** One protected 18650 lithium-ion cell, 3,000 mAh, button top, about 69 mm long, from a named cell maker.
 - **Cell contacts and USB-C board (line 9).** A spring and flat contact pair for 18650 cells with solder tabs; a power-only USB-C board about 10 x 12 mm.
 - **Button and switch (line 11).** Sealed 16 mm panel-mount push button with an M16 thread and nut; panel slide switch with two M2 holes 15 mm apart.
@@ -314,7 +320,7 @@ Thread the leads through their holes, fit two M2.5 x 6 screws, then solder every
 
 ![Step 4](05-build-plan/step-04.png)
 
-Clean the window and drop it into its hole from below; stand the head block on the floor with its lugs over the three holes, so the baffle tube rests on the glass.
+Clean the LED window ring and drop it into its hole from below; stand the head block on the floor with its lugs over the three holes, so its baffle tube drops through the ring's centre hole and the detector window lies flush with the glass. From below, run a thin bead of black RTV silicone round the tube where it meets the hole, to seal the 0.2 mm gap against light and water, and let it cure before Step 5.
 
 ### Step 5: shroud and head screws from below
 
@@ -380,11 +386,11 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | --- | --- | --- | --- |
 | Shells closed and sealed | R10 | Look along the joint under a lamp; feel for rocking | Even gasket line all round; bosses touching; no rocking |
 | Optics seated | R1, R4 | Look into the shroud with the scanner off | Window clean and level; no gap round the flange |
-| Mass | R6 | Weigh with and without the cap | Record both; the estimate is 238 g and 258 g |
+| Mass | R6 | Weigh with and without the cap | Record both; the estimate is 239 g and 259 g |
 | LED on-time limit | R14 | Bench supply in place of the cell, 300 mA limit; force one LED switch on from a test pin | The LED goes off within the hardware limit with the firmware stalled |
 | First power | R5 | Bench supply at 3.7 V, 300 mA limit, in place of the cell | Current under 200 mA idle; the display starts |
 | Charging | R5 | Cell fitted, USB-C supply, switch on; cell temperature checked | Charge current flows and stops at 4.2 V; cell stays under 45 °C |
-| Scan time | R2 | Time from button press to result on a white card | 1.5 s or less (0.33 s estimated) |
+| Scan time | R2 | Time from button press to result on a white card | 1.5 s or less (0.64 s estimated, four cycles) |
 | White reference | R11 | Calibration with the cap on | Readings on all eight bands, within the converter range |
 | Shroud light seal | R4 | Scan an opaque item under a bright lamp, then in shade | Dark readings agree within 0.5 % of the signal |
 | Display with the hood | R7 | Outdoors in sun, at several sun angles | Result readable where the hood shades the screen |
@@ -403,20 +409,21 @@ Stop at each point. Carry on only when everything listed is true.
 
 ## 7. Tools, skills and workspace
 
-**Tools.** 3D printer with a heated bed of at least 170 x 70 mm that prints PETG and TPU (a direct-drive extruder helps with TPU); temperature-controlled soldering iron with a heat-set insert tip; fine solder tip; pin vice and drills 2.2 to 5.6 mm; small files; sharp knife and steel rule; 400 grit paper; small screwdrivers for M2 to M3; wire strippers; multimeter; bench power supply with an adjustable current limit (0 to 6 V, 0 to 1 A); kitchen scale to 1 g; stopwatch; a phone camera that sees infrared.
+**Tools.** 3D printer with a heated bed of at least 170 x 70 mm that prints PETG and TPU (a direct-drive extruder helps with TPU); temperature-controlled soldering iron with a heat-set insert tip; fine solder tip; pin vice and drills 2.2 to 5.6 mm; small files; sharp knife and steel rule; 400 grit paper; small screwdrivers for M2 to M3; wire strippers; multimeter; bench power supply with an adjustable current limit (0 to 6 V, 0 to 1 A); kitchen scale to 1 g; stopwatch; a phone camera that sees infrared; an 8 mm diamond core drill (wet, in a drill press or a steady hand drill) for the window hole.
 
 **Skills.** No certified trade is needed. 3D printing in PETG and TPU, setting heat-set inserts, through-hole soldering on perfboard, safe use of a bench supply and care with lithium-ion cells. All circuits are extra-low voltage: 4.2 V at most at the cell and 5 V at the USB-C input. No mains wiring is part of this build; use a certified USB charger.
 
 **Workspace.** A bench about 1.0 x 0.6 m with good light; a ventilated place for the printer; the charging spot of S1.
 
-**Personal protective equipment.** Safety glasses when soldering, cutting PTFE and trimming leads; heat-resistant care with the iron; nitrile gloves when handling waste items for testing.
+**Personal protective equipment.** Safety glasses when soldering, cutting PTFE, core-drilling glass and trimming leads; heat-resistant care with the iron; nitrile gloves when handling waste items for testing.
 
 ## 8. Where the numbers come from
 
-- Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 312 checks); STEP and STL exports in `cad/step/` and `cad/stl/`.
+- Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 314 checks; kit 1.9 detailed model `components("A")`, checked by `python .kit/cad_check.py --export`); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/WSC-DWG-101` to `WSC-DWG-109`.
-- General arrangement: `cad/drawings/WSC-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (WSC-CAL-001 v0.4) and `docs/04-calcs/sizing.py`; mass [A3], drop loads [J2], cell strap [J4], scan time [E2], LED exposure [H2], cost [K1], [K2].
+- General arrangement: `cad/drawings/WSC-DWG-001.pdf`, Rev P6.
+- Calculations: `docs/04-calcs/01-sizing.md` (WSC-CAL-001 v0.5) and `docs/04-calcs/sizing.py`; mass [A3], window crosstalk with the baffle through the glass [C8], drop loads [J2], cell strap [J4], scan time [E2], LED exposure [H2], cost [K1], [K2].
 - Bill of materials: `bom/bom.csv`.
-- Decisions: `docs/decisions/0004-design-for-construction.md` (WSC-DDR-004), with WSC-DDR-001 to WSC-DDR-003.
-- Requirements: `docs/03-requirements.md` (WSC-REQ-001 v0.5).
+- Decisions: `docs/decisions/0004-design-for-construction.md` (WSC-DDR-004), with WSC-DDR-001 to WSC-DDR-003 and the concept options WSC-DDR-005.
+- Requirements: `docs/03-requirements.md` (WSC-PRS-001 v0.8, PR-001 to PR-017; PR-016 buildable, PR-017 crosstalk).
+- Fix F1 (window and baffle): `docs/06-design-decisions.md` (WSC-DEC-001).

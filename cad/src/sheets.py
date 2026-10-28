@@ -14,7 +14,7 @@ sys.path[:0] = [str(ROOT / ".kit"), str(ROOT / "cad" / "src")]
 from drawing import Sheet, _viewbox, _t, INK, MUTED  # noqa: E402
 from model import PARAMS as P, derived, scanner, parts  # noqa: E402
 
-DATE = "2026-10-02"
+DATE = "2026-10-24"
 D0 = "2026-09-25"
 
 
@@ -80,14 +80,13 @@ def main():
     sviews = views_of(sec, work / "sec", hidden=())
     sbb = sec.bounding_box()
 
-    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P5",
+    s = Sheet(project="WasteWise Scan", title="Handheld near-infrared resin scanner: general arrangement", dwg_no="WSC-DWG-001", rev="P6",
               author="Amish Chadha", date=DATE, scale=1.0, theme="technical",
               material="PETG shells, TPU shroud, borosilicate window; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", D0, "AC"),
-                         ("P2", "Sun hood added; mass updated (WSC-DDR-003)", D0, "AC"),
-                         ("P3", "Layout and labels tidied", D0, "AC"),
-                         ("P4", "Design made constructable (WSC-DDR-004)", DATE, "AC"),
-                         ("P5", "Shell walls 2.0 mm (R6 decision); mass 238 g", DATE, "AC")])
+              revisions=[("P1-P3", "Preliminary GA for TRL 3; sun hood (WSC-DDR-003); labels tidied", D0, "AC"),
+                         ("P4", "Design made constructable (WSC-DDR-004)", "2026-10-02", "AC"),
+                         ("P5", "Shell walls 2.0 mm (R6 decision); mass 238 g", "2026-10-02", "AC"),
+                         ("P6", "Fixes F1, F3: baffle through the glass, split window; strap 11 x 10; 239 g", DATE, "AC")])
     k = 1.0
     L = []
 
@@ -143,8 +142,8 @@ def main():
     tags = [((0.0, P["afe_z"]), f"Amplifier and ADC board {P['afe_w']:.0f} x {P['afe_w']:.0f}"),
             ((0.0, P["pd_z"] + 2), f"InGaAs photodiode, TO-46, {P['pd_z']:.0f} above base"),
             ((P["led_ring_r"] * 0.7, P["led_z"]), f"8 LEDs on {2 * P['led_ring_r']:.0f} PCD, tilted {D['led_tilt_deg']:.0f} deg"),
-            ((-3.2, 3.0), "Baffle tube 7 OD down to the window"),
-            ((-(rw - 2), 1.0), f"Window {P['window_d']:.0f} x {P['window_t']:.0f} borosilicate"),
+            ((-3.6, 1.0), f"Baffle tube {P['tube_od']:.0f} OD through the glass, {P['det_win_d']:.1f} detector window (fix F1)"),
+            ((-(rw - 2), 1.0), f"LED window {P['window_d']:.0f} x {P['window_t']:.0f} borosilicate, {P['win_hole_d']:.1f} centre hole"),
             ((-(P['shroud_rim_d'] / 2 - 2), D["z_item"] + 3), f"TPU shroud, {D['rim_id']:.0f} ID at the rim")]
     lx = sx + vw + 6
     for i, ((uy, wz), text) in enumerate(tags):
@@ -170,7 +169,7 @@ def main():
         f"Protected 18650 in a printed cradle with contacts, strapped; USB-C in the tail wall",
         f"Scan button {P['button_d']:.0f} panel mount, {P['button_x'] - P['board_x']:.0f} ahead of the display center",
         f"Cal. cap {P['cap_od']:.0f} OD x {P['cap_h']:.0f}, PTFE disc {P['ptfe_d']:.0f} x {P['ptfe_t']:.0f}; stores over the shroud",
-        f"{bb.size.Z:.0f} high with hood and shroud; mass about 238 g, 258 g with cap (WSC-CAL-001 A3)",
+        f"{bb.size.Z:.0f} high with hood and shroud; mass about 239 g, 259 g with cap (WSC-CAL-001 A3)",
         "Third-angle; X along the body, Z up; base of body Z = 0",
     ], x=226.8, y=162, width=190)
     out = s.save(ROOT / "cad" / "drawings" / "WSC-DWG-001")

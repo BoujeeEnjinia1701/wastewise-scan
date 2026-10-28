@@ -3,9 +3,9 @@ doc_id: WSC-PRC-001
 title: WasteWise Scan design precis
 project: WasteWise Scan
 doc_type: Design precis
-version: "0.7"
+version: "0.8"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-24'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -37,11 +37,15 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Mass restated for 2.0 mm shell walls (238 g, 258 g with cap); paper band study result; numbers from WSC-CAL-001 v0.4
+- version: "0.8"
+  date: '2026-10-24'
+  author: Amish Chadha
+  change: "Kit 1.9.1 upgrade: fixes F1 to F3 of WSC-DEC-001 (baffle through the glass with a separate detector window, four-cycle scan, 11 x 10 mm cell strap); numbers from WSC-CAL-001 v0.5 (0.64 s, 21.9 h, 239 g and 259 g with cap); requirements now PR numbers (WSC-PRS-001); concept options WSC-OPT-001 and STEM check WSC-STM-001"
 ---
 
 # WasteWise Scan design precis
 
-WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.33 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.4 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). Since 2026-10-02 the design is constructable (WSC-DDR-004, open for Amish's review): screws, a gasket, an optical head block, a cell cradle and strap, a display frame and clip legs on the hood were added, and the scanner now weighs about 238 g (258 g with the cap) with the 2.0 mm shell walls Amish decided on 2026-10-02, so the 250 g mass requirement (R6) is not met, 8 g over with the cap. The prototype build plan is WSC-BLD-001 ([05-build-plan.md](05-build-plan.md)).
+WasteWise Scan is a palm-sized scanner that the user presses against a plastic item. It flashes eight near-infrared bands one after another, reads the reflection with an InGaAs photodiode, and in about 0.64 s shows the resin, a confidence mark and the local price grade. The calculation note WSC-CAL-001 v0.5 shows that it meets the speed, battery, mass, sunlight, logging, calibration, eye-safety and prototype cost requirements on paper. Clear and translucent items are backed with the black calibration cap in sun, and a clip-on sun hood shades the display (decisions accepted by Amish on 2026-09-25, WSC-DDR-003). Direct-sun legibility (R7) is at risk because the hood cannot shade every sun angle, and resin accuracy (R1) remains at risk near 1,700 nm. Value-engineering target: USD 150. Estimated cost of the constructable design: USD 167.50 (USD 17.50 over the target). Since 2026-10-02 the design is constructable (WSC-DDR-004, open for Amish's review): screws, a gasket, an optical head block, a cell cradle and strap, a display frame and clip legs on the hood were added, and the scanner now weighs about 239 g (259 g with the cap) with the 2.0 mm shell walls Amish decided on 2026-10-02, so the 250 g mass requirement (PR-006, was R6) is not met, 9 g over with the cap. On 2026-10-24 the STEM check (WSC-STM-001) and its independent review led to three fixes made under Amish's standing instruction of 2026-10-23 (WSC-DEC-001 F1 to F3): the head block's baffle tube now passes through the glass and holds a separate detector window, so LED light reflected inside the window cannot reach the detector; the scan repeats its dark-band-dark sequence four times; and the cell strap is larger. The current design is option A of the concept options WSC-OPT-001; option B, a tunable-filter spectrometer, scores within 10 % of it, so the choice is with Amish. Requirements are now numbered PR-001 to PR-017 (WSC-PRS-001; R1 to R14 map to PR-001 to PR-014). The prototype build plan is WSC-BLD-001 ([05-build-plan.md](05-build-plan.md)).
 
 ![Hero render](../media/hero.png)
 
@@ -54,8 +58,8 @@ The scaffold named an 18-channel AS7265x-class sensor. That chip covers about 41
 ## How it works
 
 1. **Press.** The user presses the soft black shroud against a flat or gently curved part of the item. The shroud blocks sunlight falling on the spot and fixes the item 22 mm from the detector.
-2. **Illuminate and read.** On a button press the firmware pulses each of eight LEDs in turn (850, 940, 1,050, 1,200, 1,300, 1,450, 1,550 and 1,650 nm; WSC-DDR-001 D4). Each band reading sits between two dark readings, so slow changes in ambient light are subtracted. If the mean dark level exceeds 0.71 times the weakest band reading, which happens when sunlight passes through an unbacked clear item, the scanner shows "shade or back with cap" instead of a result (WSC-DDR-003 D8). The user then holds the black calibration cap behind the item and scans again. A transimpedance amplifier with 47 kΩ feedback and a 24-bit ADC take four conversions per reading. Eight bands and nine darks take about 240 ms.
-3. **Normalize.** Readings have the window crosstalk offset from the last open-air reading subtracted (WSC-DDR-003 D11) and are divided by the last white reference taken in the calibration cap, giving a reflectance per band that is independent of LED aging and, to first order, temperature. A board temperature reading flags drift of more than 5 %, which takes about 12.5 °C of change.
+2. **Illuminate and read.** On a button press the firmware pulses each of eight LEDs in turn (850, 940, 1,050, 1,200, 1,300, 1,450, 1,550 and 1,650 nm; WSC-DDR-001 D4). Each band reading sits between two dark readings, so slow changes in ambient light are subtracted, and the whole sequence runs four times and is averaged (fix F2). If the mean dark level exceeds 1.24 times the weakest band reading, which happens when sunlight passes through an unbacked clear item, the scanner shows "shade or back with cap" instead of a result (WSC-DDR-003 D8). The user then holds the black calibration cap behind the item and scans again. A transimpedance amplifier with 47 kΩ feedback and a 24-bit ADC take two conversions per reading. Eight bands and nine darks take about 137 ms, and the four cycles about 548 ms.
+3. **Normalize.** Readings have the remaining crosstalk offset from the last open-air reading subtracted (WSC-DDR-003 D11; with fix F1 the baffle tube through the glass keeps reflections inside the window from reaching the detector) and are divided by the last white reference taken in the calibration cap, giving a reflectance per band that is independent of LED aging and, to first order, temperature. A board temperature reading flags drift of more than 5 %, which takes about 12.5 °C of change.
 4. **Classify.** A small classifier on the ESP32-S3 (linear discriminant analysis or a small decision tree on normalized band ratios; WSC-DDR-001 D5) returns a resin and a confidence. Below the confidence threshold, or when mean reflectance is under about 0.08 (black items), it shows "unknown".
 5. **Show and log.** The display shows resin code, name, color and icon, plus the grade from the local price table. Each scan is logged as a 64-byte record for export over USB as CSV or JSON Lines.
 6. **Hand off.** Unknown or low-confidence items can be photographed with a phone and passed to WasteWise-ml. The shared record proposed in WSC-DDR-002 lets the two results be joined on a pair ID.
@@ -75,7 +79,7 @@ Table 1. Main components. Numbers match the BOM, the exploded view and drawing W
 | 3 | LED ring | Eight LEDs on a 20 mm pitch circle in a printed optical head block, each tilted about 23° so the beams meet on the item | SWIR LEDs dominate cost; the block also seats the photodiode and carries item 5 |
 | 4 | Photodiode | InGaAs PIN photodiode, 1 mm, TO-46, about 900 to 1,700 nm, inside a short baffle tube | Standard InGaAs, cutoff near 1,700 nm |
 | 5 | Amplifier and ADC | Low-noise op-amp transimpedance stage with 47 kΩ feedback, 24-bit ADC (ADS1220 class), LED switches | On perfboard for the first build |
-| 6 | Window | Borosilicate glass disc, 25 mm, 2 mm | Keeps dust out; uncoated |
+| 6 | Windows | Borosilicate LED window, 25 mm, 2 mm, with an 8.4 mm cored centre hole; separate 5.8 mm detector window in the end of the head block's baffle tube (fix F1) | Keep dust out; uncoated; the tube through the glass blocks crosstalk |
 | 7 | Light shroud | Black TPU cone, 18 mm deep, 42 mm across the rim, 36 mm inside, with a 47 mm clamping flange | Blocks direct light, sets distance; its three screws clamp the window and head block |
 | 8 | Battery | One protected 18650 Li-ion cell, 3,000 mAh | WSC-DDR-001 D7 |
 | 9 | Cell contacts and USB-C | Spring and flat contacts in a cradle printed with the bottom shell; USB-C power board in the tail wall | A printed strap (item 18) holds the cell against about 550 N on a corner drop |
@@ -84,7 +88,7 @@ Table 1. Main components. Numbers match the BOM, the exploded view and drawing W
 | 12, 13 | Calibration cap | Printed black PETG cap, 48 mm OD, with a 38 mm white PTFE reference disc; stores over the shroud | White reference (WSC-DDR-001 D6); also the backing for clear items in sun (WSC-DDR-003 D9) |
 | 14 | Sun hood | Clip-on printed PETG hood, walls 20 mm high on both sides and at the head end of the display window, open toward the user; legs snap under ribs on the top shell | About 11 g and $1 (WSC-DDR-003 D10, WSC-DDR-004) |
 | 17 | Display frame | Printed PETG frame holding the display board under the window | Four M3 screws into the top shell |
-| 18 | Cell strap | Printed PETG bridge across the cell | Two M3 screws into floor bosses [J4] |
+| 18 | Cell strap | Printed PETG bridge 11 x 10 mm across the cell (fix F3) | Two M3 screws in counterbores into floor bosses [J4] |
 | 19 | Shell gasket | Closed-cell foam tape on the bottom shell rim | Squeezed to 0.6 mm; the bosses set the squeeze |
 
 ![Exploded view](../media/exploded.png)
@@ -99,15 +103,15 @@ Table 2. Key numbers.
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
-| Scan time | about 0.33 s [E2] | R2 (1.5 s) met |
+| Scan time | about 0.64 s [E2] | PR-002 (1.5 s) met |
 | Detected signal on the white reference | 0.35 to 5.2 µW, 10 to 115 mV at 47 kΩ [C2] | |
-| Worst signal-to-noise ratio in shade | about 450 (clear item, 1,650 nm) [C4] | R1 needs about 200 |
+| Worst signal-to-noise ratio in shade | about 640 (clear item, 1,650 nm, four cycles) [C4] | 600 needed (3 sigma at 0.5 %) |
 | Sunlight through a clear item | about 23 µA, about 900 times the weakest signal [D1, D3] | Refused by the dark-level prompt [D7] |
-| Ambient error, clear item backed with the cap | 0.36 % of signal [D6] | R4 met by estimate |
-| Average power | about 0.39 W [F2] | |
-| Battery life | about 22 h [F2] | R5 (8 h) met |
+| Ambient error, clear item backed with the cap | 0.21 % of signal [D6] | PR-004 met by estimate |
+| Average power | about 0.40 W [F2] | |
+| Battery life | about 21.9 h [F2] | PR-005 (8 h) met |
 | Log capacity | about 131,000 scans at 64 B [G1] | R9 met |
-| Mass | about 238 g, 258 g with cap [A3] | **R6 (250 g) not met**, 8 g over |
+| Mass | about 239 g, 259 g with cap [A3] | **PR-006 (250 g) not met**, 9 g over |
 | Size | 160 x 62 x 34 mm (6.3 x 2.4 x 1.3 in), 72 mm high with shroud and sun hood, 68 mm wide over the hood legs [A1] | R6 size met |
 | Display contrast in 100 klx sun | about 1.6:1 unshaded; 5.2:1 where the hood shades the screen [I1, I3, I4] | **R7 at risk** |
 | LED irradiance at 200 mm | 3.9 W/m² against 100 W/m² [H2] | R14 met by estimate |
@@ -130,9 +134,9 @@ Table 2. Key numbers.
 
 ## Findings from the calculations and decisions taken
 
-- **Clear items in sun (R4, now met by estimate).** Light passing through a clear or translucent item reaches the detector from inside the shroud, and hand movement changes it faster than dark subtraction can follow. Decided (WSC-DDR-003 D8, D9): back such items with the black cap (0.36 % error) and refuse a result when the dark level shows through-light. The classifier needs training data in this backed mode.
+- **Clear items in sun (R4, now met by estimate).** Light passing through a clear or translucent item reaches the detector from inside the shroud, and hand movement changes it faster than dark subtraction can follow. Decided (WSC-DDR-003 D8, D9): back such items with the black cap (0.21 % error with the four-cycle scan of fix F2) and refuse a result when the dark level shows through-light. The classifier needs training data in this backed mode.
 - **Display in direct sun (R7, now at risk).** A 400 cd/m² IPS screen washes out in 100 klx sun. Decided (D10): a clip-on sun hood, which gives about 5.2:1 on the shaded part but cannot shade the screen with the sun near its normal or over the open side.
-- **Window crosstalk.** LED light reflected by the window's outer surface reaches the detector at about the same level as the item signal. Decided (D11): an open-air reading in the calibration routine subtracts it. Because a 10 % change from window dirt would leave about 10 % error, the fallback of a baffle extended through the glass (option (b)) is probably needed; that needs measurement at TRL 4.
+- **Window crosstalk.** LED light reflected by the window's outer surface reaches the detector at about the same level as the item signal. Decided (D11): an open-air reading in the calibration routine subtracts it. Because a 10 % change from window dirt would leave about 10 % error, the STEM check failed this detail, and the fallback of a baffle extended through the glass (option (b)) is now in the design (fix F1, 2026-10-24): an 8 mm carbon-black tube passes through a cored hole in the LED window and holds a separate 5.8 mm detector window, with the gap sealed. The light left leaks through the tube wall, about 0.05 % of the signal on assumed values, and window dirt does not change it (WSC-CAL-001 C8); a printed coupon and the built head confirm it at TRL 4.
 - **PE versus PP (R1 at risk).** The 1,650 nm band is clipped by the detector cutoff and only samples the short edge of the 1,650 to 1,750 nm region. Decided by Amish, 2026-10-02: keep eight bands, and add an extended InGaAs band only if the paper band study shows PE and PP cannot be told apart to R1 with eight (WSC-DEC-001). The study is done: PE against PP is 93 % with eight bands at the assumed item scatter, above 98 % at 1.0 % scatter, so it neither shows nor rules out the problem and the extended band is not added (WSC-CAL-001 v0.4, B5 to B7).
 
 ## Safety
@@ -143,7 +147,7 @@ Table 2. Key numbers.
 
 > **Safety:** The 18650 lithium-ion cell stores about 11 Wh. Use a protected cell from a known supplier, charge with the board's charger only, do not charge in direct sun or above 45 °C, and stop using a cell that is dented, swollen or wet. The cradle must hold the cell firmly in a drop. Do not leave the device on hot surfaces or in closed vehicles.
 
-> **Safety:** The SWIR LEDs are invisible to the eye, so a user cannot tell when they are on. In normal use they fire for about 14 ms each per scan, which keeps emission far inside the IEC 62471 exempt group by estimate (WSC-CAL-001, H). An LED stuck on at the shroud rim could exceed the corneal limit over long exposures, so the LED drivers need a hardware limit on on-time that firmware cannot override. Do not look into the window during a scan.
+> **Safety:** The SWIR LEDs are invisible to the eye, so a user cannot tell when they are on. In normal use they fire for about 8 ms each, four times per scan, which keeps emission far inside the IEC 62471 exempt group by estimate (WSC-CAL-001, H). An LED stuck on at the shroud rim could exceed the corneal limit over long exposures, so the LED drivers need a hardware limit on on-time that firmware cannot override. Do not look into the window during a scan.
 
 - Black and dark items read "unknown". Users must not treat "unknown" as any particular resin.
 - The result is advice for sorting, not a certificate of material grade for sale.

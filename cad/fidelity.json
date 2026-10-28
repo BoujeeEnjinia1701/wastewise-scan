@@ -1,0 +1,35 @@
+{
+ "level": "D3",
+ "stage": "P3",
+ "hash": "0aa9e84eeb29f1d2",
+ "options": {
+  "A": {
+   "title": "Eight-band LED scanner",
+   "parts": 86,
+   "made_or_bought": 48,
+   "fasteners": 38,
+   "welds": 0,
+   "bare": [],
+   "bare_share": 0.0,
+   "interference": [],
+   "mass_kg": 0.2,
+   "step_files": 48
+  },
+  "B": {
+   "title": "Tunable-filter spectrometer",
+   "parts": 78,
+   "made_or_bought": 40,
+   "fasteners": 38,
+   "welds": 0,
+   "bare": [],
+   "bare_share": 0.0,
+   "interference": [],
+   "mass_kg": 0.2,
+   "step_files": 0
+  }
+ },
+ "failures": [],
+ "warnings": [],
+ "passed": true,
+ "seconds": 31.1
+}
